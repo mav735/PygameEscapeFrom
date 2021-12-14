@@ -1,7 +1,9 @@
+import pygame
+
 import Draw
 import Generator
-import Camera
-import pygame
+import Player
+
 
 if __name__ == '__main__':
     pygame.init()
@@ -12,17 +14,14 @@ if __name__ == '__main__':
     """Classes"""
     Map = Generator.MapGenerator(infoObject)
     floor_drawer = Draw.DrawFloor(screen, '1', Map.cell_size)
-    camera_player = Camera.Camera()
+    player = Player.Player()
     """------------------------------------------------------"""
 
     running = True
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                camera_player.x_move(1)
+            player.movement(event)
 
         screen.fill((0, 0, 0))
-        floor_drawer.blit_floor(camera_player.get_coords())
+        floor_drawer.blit_floor(player.get_coords())
         pygame.display.flip()
