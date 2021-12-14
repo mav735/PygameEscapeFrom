@@ -11,7 +11,8 @@ class DrawFloor:
         self.cell_size = cell_size
         self.type_texture = type_texture
         self.materials = {'1': os.path.join('Floor', 'wood.jpg')}
-        self.image = pygame.transform.scale(pygame.image.load(self.materials['1']), (self.cell_size, self.cell_size))
+        self.image = pygame.transform.scale(pygame.image.load(self.materials[type_texture]),
+                                            (self.cell_size, self.cell_size))
 
     def blit_floor(self, coords):
         """:parameter coords: left and top border(x, y)"""
