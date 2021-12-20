@@ -28,11 +28,12 @@ if __name__ == '__main__':
     while running:
         clock.tick(fps)
         for event in pygame.event.get():
-            pass
+            if event.type == pygame.QUIT:
+                running = False
 
         player.movement()
 
-        screen.fill((0, 0, 0))
+        screen.fill((47, 47, 47))
         coords = player.get_coords()
         floor_drawer.blit_floor(coords)
         player_sprite.update()
