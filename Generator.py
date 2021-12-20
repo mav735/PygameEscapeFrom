@@ -1,10 +1,24 @@
+from random import randint
+
+
 class MapGenerator:
-    def __init__(self, screen_info):
-        """:parameter screen_info: surface where you draw"""
-        self.map_profile = [[0] * 50 for _ in range(50)]
+    def __init__(self):
+        """Generates 50x50 map with walls"""
+        self.map_profile = [[1] * 50 for _ in range(50)]
+        self.map_profile[0] = ['2'] * 50
+        self.map_profile[-1] = ['7'] * 50
+        for i in range(len(self.map_profile)):
+            self.map_profile[i][0] = 3
+            self.map_profile[i][-1] = 5
+        self.map_profile[0][0] = '4'
+        self.map_profile[-1][0] = '6'
+        row = randint(0, 49)
+        column = randint(0, 49)
+        while self.map_profile[row][column] != 1:
+            row = randint(0, 49)
+            column = randint(0, 49)
+        self.start_point = (1, 1)
         self.preset = None
-        self.screen_size = self.width, self.height = screen_info.current_w, screen_info.current_h
-        self.cell_size = max(self.width / 50, self.height / 50) * 5
 
     def get_map(self):
         """:returns Map info"""
