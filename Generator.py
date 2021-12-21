@@ -1,3 +1,5 @@
+from typing import List
+
 from preset import *
 
 
@@ -31,11 +33,34 @@ class MapGenerator:
                 room = square_room(room)
                 for i in range(len(room)):
                     for j in range(len(room[i])):
-                        self.map_profile[i + x][j + y] = room[i][j]
+                        self.map_profile[j + y][i + x] = room[i][j]
                 y += len(room)
             x += max(line)
             y = 0
         self.start_point = 1, 1
+
+        y = 0
+        for i in range(len(rooms[0]) - 1):
+            y += rooms[0][i]
+            path = randint(1, min(rooms[0][i + 1], rooms[0][i]) - 2)
+            self.map_profile[y - 1][path] = 1
+            self.map_profile[y][path] = 1
+
+        sides_st = []
+        sides_en = []
+        for i in range(50):
+            if self.map_profile[1][i] == '3':
+                sides_st.append(i)
+            if self.map_profile[1][i] == '5':
+                sides_en.append(i)
+
+        sides_en.pop()
+        del sides_st[0]
+
+        for i in range(len(rooms) - 1):
+            path = randint(1, min(rooms[i][0], rooms[i + 1][0]) - 2)
+            for j in range(sides_en[i], sides_st[i] + 1):
+                self.map_profile[path][j] = 1
 
     def get_map(self):
         """:returns Map info"""

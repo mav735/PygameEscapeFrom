@@ -37,8 +37,10 @@ if __name__ == '__main__':
                                              settings.resolution[1] / 50) * k)
                 settings.WriteSettings()
 
-                x = (player.screen_resolution[0] / 2 - player.x - 0.5 * player.cell_size) / player.cell_size
-                y = (player.screen_resolution[1] / 2 - player.y - 0.5 * player.cell_size) / player.cell_size
+                x = (player.screen_resolution[0] / 2 - player.x -
+                     0.5 * player.cell_size) / player.cell_size
+                y = (player.screen_resolution[1] / 2 - player.y -
+                     0.5 * player.cell_size) / player.cell_size
                 player = Player.Player((x, y))
 
                 player_sprite = pygame.sprite.Group()
@@ -46,7 +48,6 @@ if __name__ == '__main__':
 
                 screen = settings.InitScreen()
                 floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
-
 
         player.movement()
 

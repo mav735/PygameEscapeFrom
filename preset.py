@@ -3,13 +3,17 @@ from random import randint
 
 def square_room(side):
     room = [['1'] * side for _ in range(side)]
-    room[0] = ['2'] * side
-    room[-1] = ['7'] * side
+    room[0] = ['3'] * side
+    room[-1] = ['5'] * side
+
     for i in range(side):
-        room[i][0] = '3'
-        room[i][-1] = '5'
+        room[i][0] = '2'
+        room[i][-1] = '7'
+
     room[0][0] = '4'
-    room[-1][0] = '6'
+    room[-1][0] = '0'  # change edge
+    room[0][-1] = '0'  # change edge
+    room[-1][-1] = '0'  # change edge
 
     return room
 
