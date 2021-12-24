@@ -6,11 +6,13 @@ class MapGenerator:
         """Generates 50x50 map with walls"""
         self.map_profile = [['0'] * 50 for _ in range(50)]
 
-        w, h = 5, 5
+        w, h = 5, 5  # room amount
         x, y = 0, 0
-        self.start_point = 22, 13
-        random_roads = 10
 
+        self.start_point = 22, 13
+        random_roads = 10  # amount random roads
+
+        # Generation rooms
         rooms = map_generator(w, h)
         print(*rooms, sep='\n')
         for line in rooms:
@@ -23,6 +25,7 @@ class MapGenerator:
             x += max(line)
             y = 0
 
+        # Generation Roads in rows of rooms
         x = 0
         for j in range(len(rooms)):
             y = 0
@@ -49,6 +52,7 @@ class MapGenerator:
             for j in range(sides_en[i], sides_st[i] + 1):
                 self.map_profile[path][j] = '1'
 
+        # Random roads in random places
         road = 0
         while road < random_roads:
             dot = randint(0, 49), randint(0, 49)
