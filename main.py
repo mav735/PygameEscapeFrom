@@ -24,7 +24,7 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     player_sprite = pygame.sprite.Group()
     player_sprite.add(player)
-    k = 3
+    coefficient_scaling = 3
 
     while running:
         clock.tick(fps)
@@ -32,28 +32,26 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEWHEEL:
-                k = max(event.y * 0.3 + k, 1)
-                settings.cell_size = int(max(settings.resolution[0] / 50,
-                                             settings.resolution[1] / 50) * k)
+                coefficient_scaling = max(event.y * 0.05 + coefficient_scaling, 1)
+                cell_size_new = int(max(settings.resolution[0] / 50,
+                                        settings.resolution[1] / 50) * coefficient_scaling)
+
+                settings.cell_size = cell_size_new
                 settings.WriteSettings()
-
-                x = (player.screen_resolution[0] / 2 - player.x -
-                     0.5 * player.cell_size) / player.cell_size
-                y = (player.screen_resolution[1] / 2 - player.y -
-                     0.5 * player.cell_size) / player.cell_size
-                player = Player.Player((x, y))
-
-                player_sprite = pygame.sprite.Group()
-                player_sprite.add(player)
-
                 screen = settings.InitScreen()
+
+                player.resize_scale(new_cell_size=cell_size_new)
+                player_sprite.update()
+                player_sprite.draw(screen)
+
                 floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
 
         player.movement()
 
         screen.fill((47, 47, 47))
         coords = player.get_coords()
-        floor_drawer.blit_floor(coords)
         player_sprite.update()
+
+        floor_drawer.blit_floor(coords)
         player_sprite.draw(screen)
         pygame.display.flip()

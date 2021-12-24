@@ -11,9 +11,6 @@ class DrawFloor:
             self.cell_size = int(SettingsFile.readlines()[-1].rstrip())
         self.type_texture = type_texture
         self.materials = {
-            '0': pygame.transform.scale(
-                pygame.image.load(os.path.join('Floor', 'void.png')),
-                (self.cell_size, self.cell_size)),
             '1': pygame.transform.scale(
                 pygame.image.load(os.path.join('Floor', 'floor1.png')),
                 (self.cell_size, self.cell_size)),
@@ -42,7 +39,7 @@ class DrawFloor:
         """:parameter coords: left and top border(x, y)"""
         for row in range(50):
             for column in range(50):
-                if self.map[row][column] != '-1':
+                if self.map[row][column] != '-1' and self.map[row][column] != '0':
                     self.screen.blit(self.materials[str(self.map[row][column])],
                                      (coords[0] + row * self.cell_size,
                                       coords[1] + column * self.cell_size))
