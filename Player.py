@@ -56,20 +56,20 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         Flag = False  # swap animation of stay/move
         if keys:
-            if keys[pygame.K_w]:
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
                 self.y_move(1)
                 self.anime['move'][0] = True
                 Flag = True
-            if keys[pygame.K_s]:
+            if keys[pygame.K_s] or keys[pygame.K_DOWN]:
                 self.y_move(-1)
                 self.anime['move'][0] = True
                 Flag = True
-            if keys[pygame.K_a]:
+            if keys[pygame.K_a] or keys[pygame.K_LEFT]:
                 self.x_move(1)
                 self.anime['move'][0] = True
                 Flag = True
                 self.Reversed = True
-            if keys[pygame.K_d]:
+            if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
                 self.x_move(-1)
                 self.anime['move'][0] = True
                 Flag = True
