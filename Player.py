@@ -1,17 +1,17 @@
 import pygame
 from collections import deque
-
+import configparser
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, start_point):
         """:parameter start_point: (x,y) spawn point of player"""
         pygame.sprite.Sprite.__init__(self)
 
-        with open("Settings.cfg", "r") as SettingsFile:
-            """Get global settings from Settings.cfg"""
-            settings = SettingsFile.readlines()
-            self.screen_resolution = list(map(int, settings[0].rstrip().split(', ')))
-            self.cell_size = int(settings[-1].rstrip())
+
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        self.screen_resolution = list(map(int, config['Resolution']['resolution'].rstrip().split(', ')))
+        self.cell_size = int(config['Cell_size']['cell_size'])
 
         self.x = (self.screen_resolution[0] / 2) - (self.cell_size * start_point[0] + 0.5 * self.cell_size)
         self.y = (self.screen_resolution[1] / 2) - (self.cell_size * start_point[1] + 0.5 * self.cell_size)
