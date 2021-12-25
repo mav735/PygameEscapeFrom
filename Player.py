@@ -101,7 +101,7 @@ class Player(pygame.sprite.Sprite):
                     self.anime['move'][2] += 1
                 else:
                     self.anime['move'][2] = 0
-                    self.anime['move'][1].rotate()
+                    self.anime['move'][1].rotate(1)
                     self.image = pygame.transform.flip(self.anime['move'][1][0], self.Reversed, False)
                     self.rect = self.image.get_rect()
                     self.rect.center = (int(self.rect.x + 0.5 * self.screen_resolution[0]),
@@ -112,7 +112,7 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.anime['move'][2] = 0
 
-                self.anime['move'][1].rotate()
+                self.anime['move'][1].rotate(1)
                 self.image = pygame.transform.flip(self.anime['move'][1][0], self.Reversed, False)
                 self.rect = self.image.get_rect()
                 self.rect.center = (int(self.rect.x + 0.5 * self.screen_resolution[0]),
@@ -126,7 +126,7 @@ class Player(pygame.sprite.Sprite):
                     self.anime['stay'][2] += 1
                 else:
                     self.anime['stay'][2] = 0
-                    self.anime['stay'][1].rotate()
+                    self.anime['stay'][1].rotate(1)
                     self.image = pygame.transform.flip(self.anime['stay'][1][0], self.Reversed, False)
                     self.rect = self.image.get_rect()
                     self.rect.center = (int(self.rect.x + 0.5 * self.screen_resolution[0]),
@@ -137,7 +137,7 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.anime['stay'][2] = 0
 
-                self.anime['stay'][1].rotate()
+                self.anime['stay'][1].rotate(1)
                 self.image = pygame.transform.flip(self.anime['stay'][1][0], self.Reversed, False)
                 self.rect = self.image.get_rect()
                 self.rect.center = (int(self.rect.x + 0.5 * self.screen_resolution[0]),
