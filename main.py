@@ -25,7 +25,7 @@ if __name__ == '__main__':
     """------------------------------------------------------"""
 
     running = True
-    fps = 60
+    FPS = 60
     player_sprite = pygame.sprite.Group()
     player_sprite.add(player)
     coefficient_scaling = 3
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     all_sprites.add(fps_counter)
 
     while running:
-        clock.tick(fps)
+        clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
