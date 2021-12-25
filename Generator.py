@@ -93,6 +93,12 @@ class MapGenerator:
                 for j in range(points[0][1], points[1][1] + 1):
                     self.map_profile[points[0][0]][j] = '1'
 
+            # random start point
+            while True:
+                self.start_point = randint(0, 49), randint(0, 49)
+                if self.map_profile[self.start_point[0]][self.start_point[1]] == '1':
+                    break
+
     def get_map(self):
         """:returns Map info"""
         return self.map_profile
