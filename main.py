@@ -4,6 +4,7 @@ import Draw
 import Generator
 import Player
 import Settings
+import Fps
 
 if __name__ == '__main__':
     pygame.init()
@@ -11,20 +12,25 @@ if __name__ == '__main__':
     infoObject = pygame.display.Info()
 
     settings = Settings.Settings(infoObject)
+    settings.WriteSettings()
+
     screen = settings.InitScreen()
+    clock = pygame.time.Clock()
 
     """Classes"""
     Map = Generator.MapGenerator()
     floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
     player = Player.Player(Map.start_point)
+    fps_counter = Fps.FpsCounter(screen, clock)
     """------------------------------------------------------"""
 
     running = True
     fps = 60
-    clock = pygame.time.Clock()
     player_sprite = pygame.sprite.Group()
     player_sprite.add(player)
     coefficient_scaling = 3
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(fps_counter)
 
     while running:
         clock.tick(fps)
@@ -51,7 +57,8 @@ if __name__ == '__main__':
         screen.fill((47, 47, 47))
         coords = player.get_coords()
         player_sprite.update()
-
+        all_sprites.update()
         floor_drawer.blit_floor(coords)
         player_sprite.draw(screen)
+        fps_counter.render()
         pygame.display.flip()

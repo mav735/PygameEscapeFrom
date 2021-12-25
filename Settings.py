@@ -1,4 +1,5 @@
 import pygame
+import configparser
 
 
 class Settings:
@@ -15,9 +16,12 @@ class Settings:
 
     def WriteSettings(self):
         """:returns File with Settings"""
-        with open("Settings.cfg", "w") as settings_file:
-            settings_file.write(f'{self.resolution[0]}, {self.resolution[1]}\n')
-            settings_file.write(str(int(self.cell_size)))
+        config = configparser.ConfigParser()
+        config['Resolution'] = {'resolution': f'{self.resolution[0]}, {self.resolution[1]}'}
+        config['Cell_size'] = {'cell_size': str(self.cell_size)}
+        config['FPS'] = {'show_fps_counter': 'True'}
+        with open('Settings.cfg', 'w') as configfile:
+            config.write(configfile)
 
     def InitScreen(self):
         self.WriteSettings()

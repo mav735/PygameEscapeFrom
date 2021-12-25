@@ -1,5 +1,6 @@
 import pygame
 import os
+import configparser
 
 
 class DrawFloor:
@@ -7,8 +8,11 @@ class DrawFloor:
         """:parameter screen: surface where you draw
            :parameter type_texture: key in self.materials"""
         self.screen = screen
-        with open("Settings.cfg", "r") as SettingsFile:
-            self.cell_size = int(SettingsFile.readlines()[-1].rstrip())
+
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        self.cell_size = int(config['Cell_size']['cell_size'])
+
         self.type_texture = type_texture
         self.materials = {
             '1': pygame.transform.scale(
