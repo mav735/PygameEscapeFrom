@@ -24,7 +24,7 @@ if __name__ == '__main__':
     fps_counter = Fps.FpsCounter(screen, clock)
     """------------------------------------------------------"""
 
-    running = True
+    running = 1
     FPS = 60
     player_sprite = pygame.sprite.Group()
     player_sprite.add(player)
@@ -36,21 +36,23 @@ if __name__ == '__main__':
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                running = 0
             if event.type == pygame.MOUSEWHEEL:
-                coefficient_scaling = max(event.y * 0.05 + coefficient_scaling, 1)
-                cell_size_new = int(max(settings.resolution[0] / 50,
-                                        settings.resolution[1] / 50) * coefficient_scaling)
+                if coefficient_scaling != max(event.y * 0.05 + coefficient_scaling, 1) and \
+                        max(event.y * 0.05 + coefficient_scaling, 1) < 3.8:
+                    coefficient_scaling = max(event.y * 0.05 + coefficient_scaling, 1)
+                    cell_size_new = int(max(settings.resolution[0] / 50,
+                                            settings.resolution[1] / 50) * coefficient_scaling)
 
-                settings.cell_size = cell_size_new
-                settings.WriteSettings()
-                screen = settings.InitScreen()
+                    settings.cell_size = cell_size_new
+                    settings.WriteSettings()
+                    screen = settings.InitScreen()
 
-                player.resize_scale(new_cell_size=cell_size_new)
-                player_sprite.update()
-                player_sprite.draw(screen)
+                    player.resize_scale(new_cell_size=cell_size_new)
+                    player_sprite.update()
+                    player_sprite.draw(screen)
 
-                floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
+                    floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
 
         player.movement()
 
