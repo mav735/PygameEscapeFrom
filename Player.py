@@ -5,17 +5,21 @@ import configparser
 
 class Player(pygame.sprite.Sprite):
     """Main class of player, that contents coords of cam"""
+
     def __init__(self, start_point):
         """:parameter start_point: (x,y) spawn point of player"""
         pygame.sprite.Sprite.__init__(self)
 
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
-        self.screen_resolution = list(map(int, config['Resolution']['resolution'].rstrip().split(', ')))
+        self.screen_resolution = list(
+            map(int, config['Resolution']['resolution'].rstrip().split(', ')))
         self.cell_size = int(config['Cell_size']['cell_size'])
 
-        self.x = (self.screen_resolution[0] / 2) - (self.cell_size * start_point[0] + 0.5 * self.cell_size)
-        self.y = (self.screen_resolution[1] / 2) - (self.cell_size * start_point[1] + 0.5 * self.cell_size)
+        self.x = (self.screen_resolution[0] / 2) - (
+                    self.cell_size * start_point[0] + 0.5 * self.cell_size)
+        self.y = (self.screen_resolution[1] / 2) - (
+                    self.cell_size * start_point[1] + 0.5 * self.cell_size)
 
         self.health = 100
         self.mana = 2000
@@ -29,12 +33,14 @@ class Player(pygame.sprite.Sprite):
                                             (pygame.image.load
                                              (element).convert_alpha(),
                                              (self.cell_size * 0.5, self.cell_size * 0.7))
-                                            for element in self.stay_list]), 0, self.stay_list],  # max 7
+                                            for element in self.stay_list]), 0, self.stay_list],
+                      # max 7
                       'move': [False, deque([pygame.transform.scale
                                              (pygame.image.load
                                               (element).convert_alpha(),
                                               (self.cell_size * 0.5, self.cell_size * 0.7))
-                                             for element in self.walk_list]), 0, self.walk_list],  # max 9
+                                             for element in self.walk_list]), 0, self.walk_list],
+                      # max 9
                       }
 
         self.image = self.anime['stay'][1][0]
@@ -51,25 +57,25 @@ class Player(pygame.sprite.Sprite):
     def y_move(self, coefficient):
         self.y += 0.041 * self.cell_size * coefficient
 
-    def movement(self):
+    def movement(self, map_profile):
         """Checking clicked buttons, if they used to move player"""
         keys = pygame.key.get_pressed()
         Flag = False  # swap animation of stay/move
         if keys:
-            if keys[pygame.K_w] or keys[pygame.K_UP]:
+            if (keys[pygame.K_w] or keys[pygame.K_UP]) and self.collision(map_profile, 'up'):
                 self.y_move(1)
                 self.anime['move'][0] = True
                 Flag = True
-            if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+            if (keys[pygame.K_s] or keys[pygame.K_DOWN]) and self.collision(map_profile, 'down'):
                 self.y_move(-1)
                 self.anime['move'][0] = True
                 Flag = True
-            if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+            if (keys[pygame.K_a] or keys[pygame.K_LEFT]) and self.collision(map_profile, 'left'):
                 self.x_move(1)
                 self.anime['move'][0] = True
                 Flag = True
                 self.Reversed = True
-            if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+            if (keys[pygame.K_d] or keys[pygame.K_RIGHT]) and self.collision(map_profile, 'right'):
                 self.x_move(-1)
                 self.anime['move'][0] = True
                 Flag = True
@@ -78,12 +84,31 @@ class Player(pygame.sprite.Sprite):
             self.anime['move'][0] = False
             self.anime['stay'][0] = True
 
+    def collision(self, map_profile, direction):
+        point = [(self.x - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
+                 (self.y - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size)]
+        if direction == 'up':
+            point[1] = ((self.y + 0.041 * self.cell_size) -
+                        (self.screen_resolution[1] / 2)) / (-1 * self.cell_size)
+        elif direction == 'down':
+            point[1] = ((self.y - self.rect.h / 2 - 0.041 * self.cell_size) -
+                        (self.screen_resolution[1] / 2)) / (-1 * self.cell_size)
+        elif direction == 'left':
+            point[0] = ((self.x + self.rect.w / 2 + 0.041 * self.cell_size) -
+                        (self.screen_resolution[0] / 2)) / (-1 * self.cell_size)
+        elif direction == 'right':
+            point[0] = ((self.x - self.rect.w / 2 - 0.041 * self.cell_size) -
+                        (self.screen_resolution[0] / 2)) / (-1 * self.cell_size)
+
+        return map_profile[int(point[0])][int(point[1])] == '1'
+
     def resize_scale(self, new_cell_size):
         """:parameter new_cell_size: Need rescaled size of cell"""
         for element in self.anime:
             for index in range(len(self.anime[element][1])):
-                self.anime[element][1][index] = pygame.transform.scale(pygame.image.load(self.anime[element][3][index]),
-                                                                       (new_cell_size * 0.5, new_cell_size * 0.7))
+                self.anime[element][1][index] = pygame.transform.scale(
+                    pygame.image.load(self.anime[element][3][index]),
+                    (new_cell_size * 0.5, new_cell_size * 0.7))
 
         point = ((self.x - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
                  (self.y - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))
@@ -102,7 +127,8 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.anime['move'][2] = 0
                     self.anime['move'][1].rotate(1)
-                    self.image = pygame.transform.flip(self.anime['move'][1][0], self.Reversed, False)
+                    self.image = pygame.transform.flip(self.anime['move'][1][0], self.Reversed,
+                                                       False)
                     self.rect = self.image.get_rect()
                     self.rect.center = (int(self.rect.x + 0.5 * self.screen_resolution[0]),
                                         int(self.rect.y + 0.5 * self.screen_resolution[1]))
@@ -127,7 +153,8 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.anime['stay'][2] = 0
                     self.anime['stay'][1].rotate(1)
-                    self.image = pygame.transform.flip(self.anime['stay'][1][0], self.Reversed, False)
+                    self.image = pygame.transform.flip(self.anime['stay'][1][0], self.Reversed,
+                                                       False)
                     self.rect = self.image.get_rect()
                     self.rect.center = (int(self.rect.x + 0.5 * self.screen_resolution[0]),
                                         int(self.rect.y + 0.5 * self.screen_resolution[1]))

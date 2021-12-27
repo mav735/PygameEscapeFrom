@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
                     floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
 
-        player.movement()
+        player.movement(Map.get_map())
 
         screen.fill((47, 47, 47))
         coords = player.get_coords()
