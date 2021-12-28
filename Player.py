@@ -34,13 +34,11 @@ class Player(pygame.sprite.Sprite):
                                              (element).convert_alpha(),
                                              (self.cell_size * 0.5, self.cell_size * 0.7))
                                             for element in self.stay_list]), 0, self.stay_list],
-                      # max 7
                       'move': [False, deque([pygame.transform.scale
                                              (pygame.image.load
                                               (element).convert_alpha(),
                                               (self.cell_size * 0.5, self.cell_size * 0.7))
                                              for element in self.walk_list]), 0, self.walk_list],
-                      # max 9
                       }
 
         self.image = self.anime['stay'][1][0]

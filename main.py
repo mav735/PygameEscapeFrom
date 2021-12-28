@@ -22,7 +22,7 @@ if __name__ == '__main__':
     Map = Generator.MapGenerator()
     floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
     player = Player.Player(Map.start_point)
-    enemy = Enemy.Enemy(Map.start_point)
+    enemy = Enemy.Enemy((1, 1), (player.x, player.y))
     fps_counter = Fps.FpsCounter(screen, clock)
     """------------------------------------------------------"""
 
@@ -51,24 +51,23 @@ if __name__ == '__main__':
                     settings.cell_size = cell_size_new
                     settings.WriteSettings()
                     screen = settings.InitScreen()
-
+                    old_coords = player.get_coords()
                     player.resize_scale(new_cell_size=cell_size_new)
+                    enemy.resize_scale(new_cell_size=cell_size_new, player_pos=old_coords)
                     player_sprite.update()
                     player_sprite.draw(screen)
-                    enemy.resize_scale(new_cell_size=cell_size_new)
-                    enemy_sprite.update()
+                    enemy_sprite.update((player.x, player.y))
                     enemy_sprite.draw(screen)
 
                     floor_drawer = Draw.DrawFloor(screen, '1', Map.get_map())
 
         player.movement(Map.get_map())
         enemy.movement(Map.get_map())
-
         screen.fill((47, 47, 47))
         coords = player.get_coords()
 
         player_sprite.update()
-        enemy_sprite.update()
+        enemy_sprite.update((player.x, player.y))
 
         all_sprites.update()
         floor_drawer.blit_floor(coords)
