@@ -13,18 +13,20 @@ class Settings:
         self.screen = pygame.display.set_mode(self.resolution,
                                               flags=pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF,
                                               vsync=False)
+        self.fps_value = 'False'
 
-    def WriteSettings(self):
+    def WriteSettings(self, fps_value='False'):
         """:returns File with Settings"""
+        self.fps_value = fps_value
         config = configparser.ConfigParser()
         config['Resolution'] = {'resolution': f'{self.resolution[0]}, {self.resolution[1]}'}
         config['Cell_size'] = {'cell_size': str(self.cell_size)}
-        config['FPS'] = {'show_fps_counter': 'True'}
+        config['FPS'] = {'show_fps_counter': f'{fps_value}'}
         with open('Settings.cfg', 'w') as configfile:
             config.write(configfile)
 
     def InitScreen(self):
-        self.WriteSettings()
+        self.WriteSettings(self.fps_value)
         return self.screen
 
     def InitColors(self):

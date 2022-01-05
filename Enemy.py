@@ -2,8 +2,8 @@ import pygame
 import configparser
 
 
-class Enemy(pygame.sprite.Sprite):
-    """Main class of enemy"""
+class Entity(pygame.sprite.Sprite):
+    """Main class of entity"""
 
     def __init__(self, start_point, player_pos):
         """:parameter start_point: (x,y) spawn point of enemy"""
