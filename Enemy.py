@@ -2,8 +2,9 @@ import pygame
 import configparser
 
 
-class Enemy(pygame.sprite.Sprite):
+class Entity(pygame.sprite.Sprite):
     """Main class of enemy"""
+
     def __init__(self, start_point, player_pos):
         """:parameter start_point: (x,y) spawn point of enemy
            :parameter player_pos: actual position of player(camera)"""
@@ -54,6 +55,11 @@ class Enemy(pygame.sprite.Sprite):
                 self.x_move(1)
             if keys[pygame.K_RIGHT] and self.collision(map_profile, 'right'):
                 self.x_move(-1)
+
+    def MoveToPlayer(self, player_coords):
+        """:parameter player_coords: coords of players"""
+        if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
+            pass
 
     def collision(self, map_profile, direction):
         """:parameter map_profile: need board info [[len(50)]]
