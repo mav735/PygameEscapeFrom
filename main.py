@@ -56,6 +56,11 @@ def start_the_game():
                     enemy_sprite.draw(surface)
 
                     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                player.attack()
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                player.self_kill()
 
         player.movement(Map.get_map())
         enemy.movement(Map.get_map())
