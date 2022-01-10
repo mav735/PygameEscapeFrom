@@ -45,21 +45,34 @@ class Entity(pygame.sprite.Sprite):
     def movement(self, map_profile):
         """Checking clicked buttons
            :parameter map_profile: need board info [[len(50)]]"""
-        keys = pygame.key.get_pressed()
-        if keys:
-            if keys[pygame.K_UP] and self.collision(map_profile, 'up'):
-                self.y_move(1)
-            if keys[pygame.K_DOWN] and self.collision(map_profile, 'down'):
-                self.y_move(-1)
-            if keys[pygame.K_LEFT] and self.collision(map_profile, 'left'):
-                self.x_move(1)
-            if keys[pygame.K_RIGHT] and self.collision(map_profile, 'right'):
-                self.x_move(-1)
+        directions = ['', '']
+        if self.x - self.screen_resolution[0] / 2 < -10:
+            x_derivative = 1
+            directions[0] = 'right'
+        elif self.x > self.screen_resolution[0] / 2:
+            x_derivative = -1
+            directions[0] = 'left'
+        else:
+            x_derivative = 0
 
-    def MoveToPlayer(self, player_coords):
-        """:parameter player_coords: coords of players"""
+        if self.y - self.screen_resolution[1] / 2 < -10:
+            y_derivative = 1
+            directions[1] = 'down'
+        elif self.y > self.screen_resolution[1] / 2:
+            y_derivative = -1
+            directions[1] = 'up'
+        else:
+            y_derivative = 0
+
         if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
-            pass
+            print(directions)
+            if self.collision(map_profile, directions[0]) and self.collision(map_profile, directions[1]):
+                self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
+                self.last_player_pos[1] += 0.021 * self.cell_size * y_derivative * -1
+            elif self.collision(map_profile, directions[0]):
+                self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
+            elif self.collision(map_profile, directions[1]):
+                self.last_player_pos[1] += 0.021 * self.cell_size * y_derivative * -1
 
     def collision(self, map_profile, direction):
         """:parameter map_profile: need board info [[len(50)]]
@@ -67,13 +80,15 @@ class Entity(pygame.sprite.Sprite):
         point = [(self.x - self.last_player_pos[0]) / self.cell_size,
                  (self.y - self.last_player_pos[1]) / self.cell_size]
         if direction == 'up':
-            point[1] = (self.y - (self.last_player_pos[1] + 0.041 * self.cell_size)) / self.cell_size
+            point[1] = (self.y - (self.last_player_pos[1] + 0.081 * self.cell_size)) / self.cell_size
         elif direction == 'down':
-            point[1] = (self.y - (self.last_player_pos[1] - 0.041 * self.cell_size)) / self.cell_size
+            point[1] = (self.y - (self.last_player_pos[1] - 0.081 * self.cell_size)) / self.cell_size
         elif direction == 'left':
-            point[0] = (self.x - (self.last_player_pos[0] + 0.041 * self.cell_size)) / self.cell_size
+            point[0] = (self.x - (self.last_player_pos[0] + 0.081 * self.cell_size)) / self.cell_size
         elif direction == 'right':
-            point[0] = (self.x - (self.last_player_pos[0] - 0.041 * self.cell_size)) / self.cell_size
+            point[0] = (self.x - (self.last_player_pos[0] - 0.081 * self.cell_size)) / self.cell_size
+        else:
+            return True
         return map_profile[int(round(point[0]))][int(round(point[1]))] == '1'
 
     def resize_scale(self, new_cell_size, player_pos):

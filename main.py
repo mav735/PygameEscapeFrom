@@ -17,7 +17,7 @@ def start_the_game():
     """Classes"""
     Map = Generator.MapGenerator()
     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
-    player = Player.Player(Map.start_point)
+    player = Player.Player((23, 4))
     enemy = Enemy.Entity((1, 1), (player.x, player.y))
     fps_counter = Fps.FpsCounter(surface, clock)
     """------------------------------------------------------"""
