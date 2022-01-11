@@ -23,7 +23,7 @@ def start_the_game():
     """------------------------------------------------------"""
 
     running = 1
-    FPS = 75
+    FPS = 60
     player_sprite = pygame.sprite.Group()
     player_sprite.add(player)
     enemy_sprite = pygame.sprite.Group()
