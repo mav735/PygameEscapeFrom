@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.y = (self.screen_resolution[1] / 2) - (
                 self.cell_size * start_point[1] + 0.5 * self.cell_size)
 
+        self.damage = 10
         self.death_counter = 0
         self.attack_counter = 0
         self.health = 100

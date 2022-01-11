@@ -18,7 +18,7 @@ class Entity(pygame.sprite.Sprite):
 
         self.x = player_pos[0] + start_point[0] * self.cell_size
         self.y = player_pos[1] + start_point[1] * self.cell_size
-
+        self.damage = 1
         self.health = 100
 
         self.file_path = r'EnemyImg\Dolphin\Dolphin.png'
@@ -46,7 +46,7 @@ class Entity(pygame.sprite.Sprite):
         """Checking clicked buttons
            :parameter map_profile: need board info [[len(50)]]"""
         directions = ['', '']
-        if self.x - self.screen_resolution[0] / 2 < -10:
+        if self.x - self.screen_resolution[0] / 2 < -80:
             x_derivative = 1
             directions[0] = 'right'
         elif self.x > self.screen_resolution[0] / 2:
@@ -65,7 +65,6 @@ class Entity(pygame.sprite.Sprite):
             y_derivative = 0
 
         if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
-            print(directions)
             if self.collision(map_profile, directions[0]) and self.collision(map_profile, directions[1]):
                 self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
                 self.last_player_pos[1] += 0.021 * self.cell_size * y_derivative * -1
@@ -91,6 +90,10 @@ class Entity(pygame.sprite.Sprite):
             return True
         return map_profile[int(round(point[0]))][int(round(point[1]))] == '1'
 
+    def attack(self):
+        if abs(self.x - self.screen_resolution[0] / 2) < 90 and abs(self.y - self.screen_resolution[1] / 2) < 50:
+            return True
+
     def resize_scale(self, new_cell_size, player_pos):
         """:parameter player_pos: new position of player
            :parameter new_cell_size: Need rescaled size of cell"""
@@ -105,6 +108,10 @@ class Entity(pygame.sprite.Sprite):
         self.cell_size = new_cell_size
 
     def update(self, player_pos):
+        if self.health <= 0:
+            self.kill()
+        else:
+            print(self.health)
         point = [(self.x - self.last_player_pos[0]) / self.cell_size,
                  (self.y - self.last_player_pos[1]) / self.cell_size]
         self.x = player_pos[0] + point[0] * self.cell_size

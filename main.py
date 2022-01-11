@@ -64,6 +64,15 @@ def start_the_game():
 
         player.movement(Map.get_map())
         enemy.movement(Map.get_map())
+
+        for sprite in enemy_sprite.sprites():
+            if player.anime['attack'][0]:
+                if sprite.attack():
+                    sprite.health -= player.damage
+
+            if sprite.attack():
+                player.health -= sprite.damage
+
         surface.fill((47, 47, 47))
         coords = player.get_coords()
 
