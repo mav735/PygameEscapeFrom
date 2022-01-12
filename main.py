@@ -20,6 +20,7 @@ def start_the_game():
     player = Player.Player((23, 4))
     enemy = Enemy.EnemyBeast((3, 3), (player.x, player.y))
     fps_counter = Fps.FpsCounter(surface, clock)
+    hp_mana_bar = Draw.InfoPlayer(player)
     """------------------------------------------------------"""
 
     running = 1
@@ -86,7 +87,7 @@ def start_the_game():
 
         player_sprite.draw(surface)
         enemy_sprite.draw(surface)
-
+        hp_mana_bar.draw(surface)
         fps_counter.render()
         pygame.display.flip()
 
