@@ -38,6 +38,7 @@ def start_the_game():
             if event.type == pygame.QUIT:
                 running = 0
             if event.type == pygame.MOUSEWHEEL:
+                '''
                 if coefficient_scaling != max(event.y * 0.05 + coefficient_scaling, 1) and \
                         max(event.y * 0.05 + coefficient_scaling, 1) < 3.8:
                     coefficient_scaling = max(event.y * 0.05 + coefficient_scaling, 1)
@@ -56,6 +57,7 @@ def start_the_game():
                     enemy_sprite.draw(surface)
 
                     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
+                '''
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 player.attack()
 

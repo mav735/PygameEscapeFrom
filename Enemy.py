@@ -1,6 +1,7 @@
 import pygame
 import configparser
 from collections import deque
+from numba import njit
 
 
 class Entity(pygame.sprite.Sprite):
@@ -59,9 +60,9 @@ class Entity(pygame.sprite.Sprite):
            :parameter map_profile: need board info [[len(50)]]"""
 
         if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
-            if self.Player_moved:
-                self.find_path(map_profile)
-                self.Player_moved = False
+            self.find_path(map_profile)
+            print(self.path)
+            self.Player_moved = False
             entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
                           ((self.y - self.last_player_pos[1]) / self.cell_size)]
 
@@ -70,16 +71,13 @@ class Entity(pygame.sprite.Sprite):
                     self.x_move(1)
                 elif entity_pos[0] < self.path[0][0]:
                     self.x_move(-1)
-                if entity_pos[1] > self.path[0][1]:
+                if entity_pos[1] - self.path[0][1] > 0.1:
                     self.y_move(1)
-                elif entity_pos[1] < self.path[0][1]:
+                elif self.path[0][1] - entity_pos[1] > 0.1:
                     self.y_move(-1)
 
-                entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
-                              ((self.y - self.last_player_pos[1]) / self.cell_size)]
-
-                if abs(entity_pos[0] - self.path[0][0]) <= 0.05 and \
-                        abs(entity_pos[1] - self.path[0][1]) <= 0.05:
+                if abs(entity_pos[0] - self.path[0][0]) <= 0.1 and \
+                        abs(entity_pos[1] - self.path[0][1]) <= 0.1:
                     del self.path[0]
 
     def find_path(self, map_profile):
@@ -88,7 +86,6 @@ class Entity(pygame.sprite.Sprite):
         player_pos = [int((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size)),
                       int((self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))]
 
-        print(player_pos)
         card = [[float('inf')] * 50 for _ in range(50)]
         card[entity_pos[0]][entity_pos[1]] = 0
         current = [entity_pos]
@@ -151,11 +148,16 @@ class Entity(pygame.sprite.Sprite):
     def resize_scale(self, new_cell_size, player_pos):
         """:parameter player_pos: new position of player
            :parameter new_cell_size: Need rescaled size of cell"""
-        self.image = pygame.transform.scale(pygame.image.load(self.file_path),
-                                            (new_cell_size * 0.7, new_cell_size * 0.5))
+
+        for element in self.anime:
+            for index in range(len(self.anime[element][1])):
+                pygame.transform.scale(
+                    pygame.image.load(self.anime[element][3][index]),
+                    (new_cell_size, new_cell_size))
 
         point = [(self.x - self.last_player_pos[0]) / self.cell_size,
                  (self.y - self.last_player_pos[1]) / self.cell_size]
+
         self.x = player_pos[0] + point[0] * new_cell_size
         self.y = player_pos[1] + point[1] * new_cell_size
 
@@ -188,22 +190,22 @@ class EnemyBeast(Entity):
         self.anime = {'stay': [True, deque([pygame.transform.scale
                                             (pygame.image.load
                                              (element).convert_alpha(),
-                                             (self.cell_size * 1, self.cell_size * 1))
+                                             (self.cell_size * 2, self.cell_size * 1.5))
                                             for element in self.stay_list]), 0, self.stay_list],
                       'move': [False, deque([pygame.transform.scale
                                              (pygame.image.load
                                               (element).convert_alpha(),
-                                              (self.cell_size * 1, self.cell_size * 1))
+                                              (self.cell_size * 2, self.cell_size * 1.5))
                                              for element in self.walk_list]), 0, self.walk_list],
                       'death': [False, deque([pygame.transform.scale
                                               (pygame.image.load
                                                (element).convert_alpha(),
-                                               (self.cell_size * 1, self.cell_size * 1))
+                                               (self.cell_size * 2, self.cell_size * 1.5))
                                               for element in self.death_list]), 0, self.death_list],
                       'attack': [False, deque([pygame.transform.scale
                                                (pygame.image.load
                                                 (element).convert_alpha(),
-                                                (self.cell_size * 1, self.cell_size * 1))
+                                                (self.cell_size * 2, self.cell_size * 1.5))
                                                for element in self.attack_list_1]), 0, self.attack_list_1]
                       }
 
