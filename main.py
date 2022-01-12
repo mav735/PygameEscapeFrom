@@ -18,7 +18,7 @@ def start_the_game():
     Map = Generator.MapGenerator()
     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
     player = Player.Player((23, 4))
-    enemy = Enemy.EnemyBeast((1, 1), (player.x, player.y))
+    enemy = Enemy.EnemyBeast((3, 3), (player.x, player.y))
     fps_counter = Fps.FpsCounter(surface, clock)
     """------------------------------------------------------"""
 

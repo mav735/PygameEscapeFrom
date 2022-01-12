@@ -67,14 +67,20 @@ class Entity(pygame.sprite.Sprite):
                           ((self.y - self.last_player_pos[1]) / self.cell_size)]
 
             if self.path:
-                if entity_pos[0] > self.path[0][0]:
+                if entity_pos[0] - self.path[0][0] > 0.1:
                     self.x_move(1)
-                elif entity_pos[0] < self.path[0][0]:
+                    print('right', end=' ')
+                if self.path[0][0] - entity_pos[0] > 0.1:
                     self.x_move(-1)
+                    print('left', end=' ')
+
                 if entity_pos[1] - self.path[0][1] > 0.1:
                     self.y_move(1)
-                elif self.path[0][1] - entity_pos[1] > 0.1:
+                    print('up', end=' ')
+                if self.path[0][1] - entity_pos[1] > 0.1:
                     self.y_move(-1)
+                    print('down', end=' ')
+
 
                 if abs(entity_pos[0] - self.path[0][0]) <= 0.1 and \
                         abs(entity_pos[1] - self.path[0][1]) <= 0.1:
