@@ -17,10 +17,12 @@ def start_the_game():
     """Classes"""
     Map = Generator.MapGenerator()
     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
-    player = Player.Player((23, 4))
+    player = Player.Player((23, 4), Map.get_monolith())
+
     enemy = Enemy.EnemyBeast((3, 3), (player.x, player.y), player)
     enemy_2 = Enemy.EnemyBeast((2, 2), (player.x, player.y), player)
     enemy_3 = Enemy.EnemyBeast((1, 1), (player.x, player.y), player)
+
     fps_counter = Fps.FpsCounter(surface, clock)
     hp_mana_bar = Draw.InfoPlayer(player)
     """------------------------------------------------------"""
@@ -82,8 +84,11 @@ def start_the_game():
 
         surface.fill((47, 47, 47))
         coords = player.get_coords()
+        player.update()
 
-        player_sprite.update()
+        end = player.end()
+        if end:
+            running = 0
         enemy_sprite.update((player.x, player.y))
 
         all_sprites.update()

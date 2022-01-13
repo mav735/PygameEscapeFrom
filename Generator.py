@@ -96,11 +96,19 @@ class MapGenerator:
                         for j in range(points[0][1], points[1][1] + 1):
                             self.map_profile[points[0][0]][j] = '1'
 
-                    # random start point
-                    while True:
-                        self.start_point = randint(0, 49), randint(0, 49)
-                        if self.map_profile[self.start_point[0]][self.start_point[1]] == '1':
-                            break
+                # random start point
+                while True:
+                    self.start_point = randint(0, 49), randint(0, 49)
+                    if self.map_profile[self.start_point[0]][self.start_point[1]] == '1':
+                        break
+
+                while True:
+                    self.monolith = [randint(0, 49), randint(0, 49)]
+                    if self.map_profile[self.monolith[0]][self.monolith[1]] == '1' \
+                            and self.monolith != self.start_point:
+                        break
+                print('monolith =', self.monolith)
+                self.map_profile[self.monolith[0]][self.monolith[1]] = '8'
                 flag = True
                 if flag:
                     break
@@ -110,6 +118,10 @@ class MapGenerator:
     def get_map(self):
         """:returns Map info"""
         return self.map_profile
+
+    def get_monolith(self):
+        """:returns Monolith position"""
+        return self.monolith
 
 
 if __name__ == '__main__':

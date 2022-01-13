@@ -6,7 +6,7 @@ import configparser
 class Player(pygame.sprite.Sprite):
     """Main class of player, that contents coords of cam"""
 
-    def __init__(self, start_point):
+    def __init__(self, start_point, end_point):
         """:parameter start_point: (x,y) spawn point of player"""
         pygame.sprite.Sprite.__init__(self)
 
@@ -60,6 +60,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.Reversed = False  # swap animation reverse
         self.mask = pygame.mask.from_surface(self.image)
+        self.monolith = end_point
 
     def get_coords(self):
         """:returns coords of players(cam)"""
@@ -100,6 +101,15 @@ class Player(pygame.sprite.Sprite):
         if not Flag:
             self.anime['move'][0] = False
             self.anime['stay'][0] = True
+
+    def end(self):
+        point = [int((self.x - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size)),
+                 int((self.y - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))]
+        result = []
+        for k in range(9):
+            dot = [int(point[0] - 1 + k % 3), int(point[1] - 1 + k // 3)]
+            result.append(dot)
+        return self.monolith in result
 
     def attack(self):
         self.anime['move'][0] = False
