@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, start_point, end_point):
         """:parameter start_point: (x,y) spawn point of player"""
         pygame.sprite.Sprite.__init__(self)
-
+        self.all_money = 300
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
         self.screen_resolution = list(

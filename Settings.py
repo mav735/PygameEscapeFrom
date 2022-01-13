@@ -22,6 +22,19 @@ class Settings:
         config['Resolution'] = {'resolution': f'{self.resolution[0]}, {self.resolution[1]}'}
         config['Cell_size'] = {'cell_size': str(self.cell_size)}
         config['FPS'] = {'show_fps_counter': f'{fps_value}'}
+        config['Game'] = {'started': f'True'}
+        with open('Settings.cfg', 'w') as configfile:
+            config.write(configfile)
+
+    def WriteEnd(self, player, fps_value='False'):
+        self.fps_value = fps_value
+        config = configparser.ConfigParser()
+        config['Resolution'] = {'resolution': f'{self.resolution[0]}, {self.resolution[1]}'}
+        config['Cell_size'] = {'cell_size': str(self.cell_size)}
+        config['FPS'] = {'show_fps_counter': f'{fps_value}'}
+        config['Game'] = {'started': f'False',
+                          'money': f'{player.all_money}'}
+
         with open('Settings.cfg', 'w') as configfile:
             config.write(configfile)
 

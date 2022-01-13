@@ -1,5 +1,6 @@
 import pygame_menu
 import pygame
+import configparser
 
 
 class Menu:
@@ -38,6 +39,10 @@ class Menu:
 
     def start(self):
         self.go()
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        if config['Game']['started'] == 'False':
+            pygame_menu.menu.Menu.get_current(self.menu).clear(True)
 
     def back_to_menu(self):
         if self.menu.get_widgets()[0].get_value()[0][0] == 'ON':

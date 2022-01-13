@@ -6,6 +6,7 @@ import Player
 import Settings
 import Fps
 import Enemy
+import configparser
 
 
 def start_the_game():
@@ -99,6 +100,7 @@ def start_the_game():
         hp_mana_bar.draw(surface)
         fps_counter.render()
         pygame.display.flip()
+    settings.WriteEnd(player)
 
 
 if __name__ == '__main__':
@@ -110,3 +112,6 @@ if __name__ == '__main__':
     screen = settings.InitScreen()
     menu = Menu.Menu(settings, start_the_game)
     menu.menu.mainloop(screen)
+    config = configparser.ConfigParser()
+    config.read('Settings.cfg')
+    self.cell_size = int(config['Cell_size']['cell_size'])
