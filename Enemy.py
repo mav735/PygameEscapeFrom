@@ -9,11 +9,12 @@ from collections import deque
 class Entity(pygame.sprite.Sprite):
     """Main class of enemy"""
 
-    def __init__(self, start_point, player_pos):
+    def __init__(self, start_point, player_pos, player):
         """:parameter start_point: (x,y) spawn point of enemy
            :parameter player_pos: actual position of player(camera)"""
         pygame.sprite.Sprite.__init__(self)
         self.player_pos = (None, None)
+        self.player = player
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
         self.screen_resolution = list(
@@ -44,11 +45,11 @@ class Entity(pygame.sprite.Sprite):
 
     def x_move(self, coefficient):
         """:parameter coefficient: (1 or -1) means derivative coord x"""
-        self.last_player_pos[0] += 0.081 * self.cell_size * coefficient
+        self.last_player_pos[0] += 0.041 * self.cell_size * coefficient
 
     def y_move(self, coefficient):
         """:parameter coefficient: (1 or -1) means derivative coord y"""
-        self.last_player_pos[1] += 0.081 * self.cell_size * coefficient
+        self.last_player_pos[1] += 0.041 * self.cell_size * coefficient
 
     @staticmethod
     def neighbours(point):
@@ -61,35 +62,6 @@ class Entity(pygame.sprite.Sprite):
             result.append(dot)
         result = [p for p in result if -1 < p[0] < 50 and -1 < p[1] < 50]
         return result
-
-    def movement(self, map_profile):
-        """Checking clicked buttons
-           :parameter map_profile: need board info [[len(50)]]"""
-
-        if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
-            entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
-                          ((self.y - self.last_player_pos[1]) / self.cell_size)]
-
-            point_player = ((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
-                            (self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))
-
-            self.find_path(map_profile)
-
-            if self.path:
-                self.path.pop(-1)
-                self.path.append(point_player)
-                if abs(entity_pos[0] - self.path[0][0]) <= 0.1 and abs(entity_pos[1] - self.path[0][1]) <= 0.1:
-                    del self.path[0]
-
-                if self.path:
-                    if entity_pos[0] - self.path[0][0] > 0.05:
-                        self.x_move(1)
-                    if self.path[0][0] - entity_pos[0] > 0.05:
-                        self.x_move(-1)
-                    if entity_pos[1] - self.path[0][1] > 0.05:
-                        self.y_move(1)
-                    if self.path[0][1] - entity_pos[1] > 0.05:
-                        self.y_move(-1)
 
     def find_path(self, map_profile):
         entity_pos = [round((self.x - self.last_player_pos[0]) / self.cell_size),
@@ -156,7 +128,7 @@ class Entity(pygame.sprite.Sprite):
 
     def attack(self):
         if abs(self.x - self.screen_resolution[0] / 2) < 90 and abs(
-                self.y - self.screen_resolution[1] / 2) < 50:
+                self.y - self.screen_resolution[1] / 2) < 90:
             return True
 
     def resize_scale(self, new_cell_size, player_pos):
@@ -186,14 +158,14 @@ class Entity(pygame.sprite.Sprite):
                  (self.y - self.last_player_pos[1]) / self.cell_size]
         self.x = player_pos[0] + point[0] * self.cell_size
         self.y = player_pos[1] + point[1] * self.cell_size
-        self.rect.x = self.x
-        self.rect.y = self.y
+        self.rect.x = self.x - self.rect.size[0]
+        self.rect.y = self.y - self.rect.size[0]
         self.last_player_pos = list(player_pos)
 
 
 class EnemyBeast(Entity):
-    def __init__(self, start_point, player_pos):
-        super().__init__(start_point, player_pos)
+    def __init__(self, start_point, player_pos, player):
+        super().__init__(start_point, player_pos, player)
         self.last_anime = None
         self.attack_counter = 0
         self.stay_list = [rf'EnemyImg\Fantasy Beast\Stand\stand{i}.png' for i in range(7)]
@@ -219,26 +191,92 @@ class EnemyBeast(Entity):
                       'attack': [False, deque([pygame.transform.scale
                                                (pygame.image.load
                                                 (element).convert_alpha(),
-                                                (self.cell_size * 1, self.cell_size * 0.7))
+                                                (self.cell_size * 1.5, self.cell_size * 0.45))
                                                for element in self.attack_list_1]), 0,
                                  self.attack_list_1]
                       }
+        self.image = self.anime['stay'][1][0]
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def movement(self, map_profile):
+        if not self.anime['attack'][0]:
+            """Checking clicked buttons
+               :parameter map_profile: need board info [[len(50)]]"""
+            if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
+                entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
+                              ((self.y - self.last_player_pos[1]) / self.cell_size)]
+
+                point_player = ((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
+                                (self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))
+                self.find_path(map_profile)
+
+                if self.path:
+                    self.path.pop(-1)
+                    self.path.append(point_player)
+                    if abs(entity_pos[0] - self.path[0][0]) <= 0.05 and abs(entity_pos[1] - self.path[0][1]) <= 0.05:
+                        del self.path[0]
+                    if self.path:
+                        move = False
+                        if entity_pos[0] - self.path[0][0] > 0.02:
+                            self.x_move(1)
+                            self.Reversed = True
+                            move = True
+                        if (self.path[0][0] - 0.2) - entity_pos[0] > 0.02:
+                            self.x_move(-1)
+                            self.Reversed = False
+                            move = True
+                        if entity_pos[1] - self.path[0][1] > 0.02:
+                            self.y_move(1)
+                            move = True
+                        if self.path[0][1] - entity_pos[1] > 0.02:
+                            self.y_move(-1)
+                            move = True
+                        if not move:
+                            self.anime['stay'][0] = True
+                else:
+                    directions = ['', '']
+                    if self.x - self.screen_resolution[0] / 2 < -10:
+                        x_derivative = 1
+                        directions[0] = 'right'
+                    elif self.x > self.screen_resolution[0] / 2:
+                        x_derivative = -1
+                        directions[0] = 'left'
+                    else:
+                        x_derivative = 0
+                    if self.y - self.screen_resolution[1] / 2 < -10:
+                        y_derivative = 1
+                        directions[1] = 'down'
+                    elif self.y > self.screen_resolution[1] / 2:
+                        y_derivative = -1
+                        directions[1] = 'up'
+                    else:
+                        y_derivative = 0
+
+                    if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
+                        print(directions)
+                        if self.collision(map_profile, directions[0]) and self.collision(map_profile,
+                                                                                         directions[1]):
+                            self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
+                            self.last_player_pos[1] += 0.021 * self.cell_size * y_derivative * -1
+                        elif self.collision(map_profile, directions[0]):
+                            self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
+                        elif self.collision(map_profile, directions[1]):
+                            self.last_player_pos[1] += 0.021 * self.cell_size * y_derivative * -1
 
     def attack(self):
-        if abs(self.x - self.screen_resolution[0] / 2) < 90 and abs(
-                self.y - self.screen_resolution[1] / 2) < 50:
+        if pygame.sprite.collide_mask(self, self.player):
             self.anime['attack'][0] = True
             return True
 
     def x_move(self, coefficient):
         """:parameter coefficient: (1 or -1) means derivative coord x"""
         self.anime['move'][0] = True
-        self.last_player_pos[0] += 0.081 * self.cell_size * coefficient
+        self.last_player_pos[0] += 0.041 * self.cell_size * coefficient
 
     def y_move(self, coefficient):
         """:parameter coefficient: (1 or -1) means derivative coord y"""
         self.anime['move'][0] = True
-        self.last_player_pos[1] += 0.081 * self.cell_size * coefficient
+        self.last_player_pos[1] += 0.041 * self.cell_size * coefficient
 
     def update(self, player_pos):
         point = [(self.x - self.last_player_pos[0]) / self.cell_size,
@@ -247,6 +285,8 @@ class EnemyBeast(Entity):
         self.x = player_pos[0] + point[0] * self.cell_size
         self.y = player_pos[1] + point[1] * self.cell_size
         self.last_player_pos = list(player_pos)
+        derivative_x = 0
+        derivative_y = 0
 
         if self.health <= 0:
             self.anime['death'][0] = True
@@ -265,6 +305,13 @@ class EnemyBeast(Entity):
 
             self.last_anime = 'death'
         elif self.anime['attack'][0]:
+            if self.Reversed:
+                derivative_x = 30
+            else:
+                derivative_x = -30
+            derivative_y = 20
+            self.anime['attack'][0] = True
+
             if self.anime['attack'][2] != 4:
                 self.anime['attack'][2] += 1
             else:
@@ -301,5 +348,7 @@ class EnemyBeast(Entity):
 
             self.last_anime = 'stay'
 
-        self.rect.x = self.x
-        self.rect.y = self.y
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.rect.x = self.x - derivative_x
+        self.rect.y = self.y - derivative_y

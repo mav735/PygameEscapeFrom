@@ -59,6 +59,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.anime['stay'][1][0]
         self.rect = self.image.get_rect()
         self.Reversed = False  # swap animation reverse
+        self.mask = pygame.mask.from_surface(self.image)
 
     def get_coords(self):
         """:returns coords of players(cam)"""
@@ -212,3 +213,5 @@ class Player(pygame.sprite.Sprite):
                                     int(self.rect.y + 0.5 * self.screen_resolution[1]))
 
             self.last_anime = 'stay'
+
+        self.mask = pygame.mask.from_surface(self.image)

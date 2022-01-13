@@ -18,7 +18,9 @@ def start_the_game():
     Map = Generator.MapGenerator()
     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
     player = Player.Player((23, 4))
-    enemy = Enemy.EnemyBeast((3, 3), (player.x, player.y))
+    enemy = Enemy.EnemyBeast((3, 3), (player.x, player.y), player)
+    enemy_2 = Enemy.EnemyBeast((2, 2), (player.x, player.y), player)
+    enemy_3 = Enemy.EnemyBeast((1, 1), (player.x, player.y), player)
     fps_counter = Fps.FpsCounter(surface, clock)
     hp_mana_bar = Draw.InfoPlayer(player)
     """------------------------------------------------------"""
@@ -29,6 +31,8 @@ def start_the_game():
     player_sprite.add(player)
     enemy_sprite = pygame.sprite.Group()
     enemy_sprite.add(enemy)
+    enemy_sprite.add(enemy_2)
+    enemy_sprite.add(enemy_3)
     coefficient_scaling = 3
     all_sprites = pygame.sprite.Group()
     all_sprites.add(fps_counter)
@@ -66,9 +70,9 @@ def start_the_game():
                 player.health += 1000
 
         player.movement(Map.get_map())
-        enemy.movement(Map.get_map())
 
         for sprite in enemy_sprite.sprites():
+            sprite.movement(Map.get_map())
             if player.anime['attack'][0]:
                 if sprite.attack():
                     sprite.health -= player.damage
