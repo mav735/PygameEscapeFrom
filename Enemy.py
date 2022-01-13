@@ -202,7 +202,7 @@ class EnemyBeast(Entity):
         if not self.anime['attack'][0]:
             """Checking clicked buttons
                :parameter map_profile: need board info [[len(50)]]"""
-            if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
+            if -50 <= self.x < self.screen_resolution[0] and -20 <= self.y < self.screen_resolution[1]:
                 entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
                               ((self.y - self.last_player_pos[1]) / self.cell_size)]
 

@@ -65,7 +65,7 @@ class InfoPlayer:
 
         x1, y1 = (0, 0)
         image = pygame.surface.Surface(self.FRAME.get_size(), pygame.SRCALPHA)
-        image.blit(self.FRAME, (0, 0))
+
         health_length = round(264 * (self.player.health / 100) + 0.5)
         health_line = pygame.surface.Surface((health_length, 24))
         health_line.fill((255, 30, 30))
@@ -80,5 +80,5 @@ class InfoPlayer:
         image.blit(self.font.render(f'{round(self.player.mana + 0.5)}/' +
                                     f'{self.player.mana}',
                                     True, (255, 255, 255)), (x1 + 220, y1 + 50))
-
+        image.blit(self.FRAME, (0, 0))
         screen.blit(image, (0, 0))
