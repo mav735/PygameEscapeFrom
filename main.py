@@ -63,7 +63,7 @@ def start_the_game():
                 player.attack()
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-                player.self_kill()
+                player.health += 1000
 
         player.movement(Map.get_map())
         enemy.movement(Map.get_map())

@@ -67,94 +67,51 @@ class Entity(pygame.sprite.Sprite):
            :parameter map_profile: need board info [[len(50)]]"""
 
         if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
-            if len(self.path) <= 2:
-                self.find_path(map_profile)
-                self.coords = [None, False, None]
             entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
                           ((self.y - self.last_player_pos[1]) / self.cell_size)]
-            print(entity_pos)
+
+            point_player = ((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
+                            (self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))
+
+            self.find_path(map_profile)
 
             if self.path:
-                self.coords.append(entity_pos)
-                if len(self.path) > 2:
-                    if entity_pos[0] - self.path[0][0] > 0.1 and self.movement_list[-1] != 'right':
-                        if self.collision(map_profile, 'left'):
-                            self.x_move(1)
-                            self.movement_list.append('left')
-                            print('left', end=' ')
-                    if self.path[0][0] - entity_pos[0] > 0.1 and self.movement_list[-1] != 'left':
-                        if self.collision(map_profile, 'right'):
-                            self.x_move(-1)
-                            self.movement_list.append('right')
-                            print('right', end=' ')
+                self.path.pop(-1)
+                self.path.append(point_player)
+                if abs(entity_pos[0] - self.path[0][0]) <= 0.1 and abs(entity_pos[1] - self.path[0][1]) <= 0.1:
+                    del self.path[0]
 
-                    if entity_pos[1] - self.path[0][1] > 0.1 and self.movement_list[-1] != 'down':
-                        if self.collision(map_profile, 'up'):
-                            self.y_move(1)
-                            self.movement_list.append('up')
-                            print('up', end=' ')
-                    if self.path[0][1] - entity_pos[1] > 0.1 and self.movement_list[-1] != 'up':
-                        if self.collision(map_profile, 'down'):
-                            self.y_move(-1)
-                            self.movement_list.append('down')
-                            print('down', end=' ')
-
-                    entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
-                                  ((self.y - self.last_player_pos[1]) / self.cell_size)]
-
-                    if abs(entity_pos[0] - self.path[0][0]) + \
-                            abs(entity_pos[1] - self.path[0][1]) <= 2:
-                        del self.path[0]
-                else:
-                    directions = ['', '']
-                    if self.x - self.screen_resolution[0] / 2 < -80:
-                        x_derivative = 1
-                        directions[0] = 'right'
-                    elif self.x > self.screen_resolution[0] / 2:
-                        x_derivative = -1
-                        directions[0] = 'left'
-                    else:
-                        x_derivative = 0
-                    if self.y - self.screen_resolution[1] / 2 < -10:
-                        y_derivative = 1
-                        directions[1] = 'down'
-                    elif self.y > self.screen_resolution[1] / 2:
-                        y_derivative = -1
-                        directions[1] = 'up'
-                    else:
-                        y_derivative = 0
-
-                    if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < \
-                            self.screen_resolution[1]:
-                        if self.collision(map_profile, directions[0]) and self.collision(
-                                map_profile, directions[1]):
-                            self.last_player_pos[0] += 0.041 * self.cell_size * x_derivative * -1
-                            self.last_player_pos[1] += 0.041 * self.cell_size * y_derivative * -1
-                        elif self.collision(map_profile, directions[0]):
-                            self.last_player_pos[0] += 0.041 * self.cell_size * x_derivative * -1
-                        elif self.collision(map_profile, directions[1]):
-                            self.last_player_pos[1] += 0.041 * self.cell_size * y_derivative * -1
+                if self.path:
+                    if entity_pos[0] - self.path[0][0] > 0.05:
+                        self.x_move(1)
+                    if self.path[0][0] - entity_pos[0] > 0.05:
+                        self.x_move(-1)
+                    if entity_pos[1] - self.path[0][1] > 0.05:
+                        self.y_move(1)
+                    if self.path[0][1] - entity_pos[1] > 0.05:
+                        self.y_move(-1)
 
     def find_path(self, map_profile):
-        entity_pos = [int((self.x - self.last_player_pos[0]) / self.cell_size),
-                      int((self.y - self.last_player_pos[1]) / self.cell_size)]
+        entity_pos = [round((self.x - self.last_player_pos[0]) / self.cell_size),
+                      round((self.y - self.last_player_pos[1]) / self.cell_size)]
         player_pos = [
-            int((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size)),
-            int((self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))]
+            round((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size)),
+            round((self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))]
 
-        card = [[float('inf')] * 50 for _ in range(50)]
+        card = [[999] * 50 for _ in range(50)]
         card[entity_pos[0]][entity_pos[1]] = 0
         current = [entity_pos]
         to_check = []
         opened = [entity_pos]
         dist = 1
+
         while current:
             for cell in current:
                 for point in self.neighbours(cell):
                     if point not in opened:
+                        opened.append(point)
                         if map_profile[point[0]][point[1]] == '1':
                             card[point[0]][point[1]] = dist
-                            opened.append(point)
                             to_check.append(point)
 
             if player_pos in opened:
@@ -167,6 +124,7 @@ class Entity(pygame.sprite.Sprite):
 
         self.path = [player_pos]
         value = card[player_pos[0]][player_pos[1]]
+
         while value > 0:
             for point in self.neighbours(self.path[-1]):
                 if value > card[point[0]][point[1]]:
@@ -246,22 +204,22 @@ class EnemyBeast(Entity):
         self.anime = {'stay': [True, deque([pygame.transform.scale
                                             (pygame.image.load
                                              (element).convert_alpha(),
-                                             (self.cell_size * 1.3, self.cell_size * 1))
+                                             (self.cell_size * 1, self.cell_size * 0.7))
                                             for element in self.stay_list]), 0, self.stay_list],
                       'move': [False, deque([pygame.transform.scale
                                              (pygame.image.load
                                               (element).convert_alpha(),
-                                              (self.cell_size * 1.3, self.cell_size * 1))
+                                              (self.cell_size * 1, self.cell_size * 0.7))
                                              for element in self.walk_list]), 0, self.walk_list],
                       'death': [False, deque([pygame.transform.scale
                                               (pygame.image.load
                                                (element).convert_alpha(),
-                                               (self.cell_size * 1.3, self.cell_size * 1))
+                                               (self.cell_size * 1, self.cell_size * 0.7))
                                               for element in self.death_list]), 0, self.death_list],
                       'attack': [False, deque([pygame.transform.scale
                                                (pygame.image.load
                                                 (element).convert_alpha(),
-                                                (self.cell_size * 1.3, self.cell_size * 1))
+                                                (self.cell_size * 1, self.cell_size * 0.7))
                                                for element in self.attack_list_1]), 0,
                                  self.attack_list_1]
                       }
