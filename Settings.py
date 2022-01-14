@@ -22,24 +22,25 @@ class Settings:
         config['Resolution'] = {'resolution': f'{self.resolution[0]}, {self.resolution[1]}'}
         config['Cell_size'] = {'cell_size': str(self.cell_size)}
         config['FPS'] = {'show_fps_counter': f'{fps_value}'}
-        config['Game'] = {'started': f'True'}
+        config['Game'] = {'started': f'True', 'health_lvl': '0', 'strength_lvl': '0',
+                          'speed_lvl': '0', 'regeneration_lvl': '0', 'money': '0'}
+
         with open('Settings.cfg', 'w') as configfile:
             config.write(configfile)
 
     def WriteEnd(self, player, fps_value='False'):
         self.fps_value = fps_value
         config = configparser.ConfigParser()
-        config['Resolution'] = {'resolution': f'{self.resolution[0]}, {self.resolution[1]}'}
-        config['Cell_size'] = {'cell_size': str(self.cell_size)}
-        config['FPS'] = {'show_fps_counter': f'{fps_value}'}
-        config['Game'] = {'started': f'False',
-                          'money': f'{player.all_money}'}
-
+        config.read('Settings.cfg')
+        config['Game']['started'] = f'False'
+        config['Game']['money'] = f'{player.all_money}'
         with open('Settings.cfg', 'w') as configfile:
             config.write(configfile)
 
     def InitScreen(self):
-        self.WriteSettings(self.fps_value)
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        config['FPS'] = {'show_fps_counter': f'{self.fps_value}'}
         return self.screen
 
     def InitColors(self):

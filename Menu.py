@@ -10,7 +10,7 @@ class Menu:
                                                     title_font_shadow=True,
                                                     widget_padding=(20, 50),
                                                     widget_font_antialias=True,
-                                                    widget_font=pygame_menu.font.FONT_BEBAS,
+                                                    widget_font=pygame_menu.font.FONT_HELVETICA,
                                                     widget_font_color=(255, 255, 255),
                                                     widget_tab_size=210,
                                                     widget_background_inflate_to_selection=True,
@@ -41,13 +41,40 @@ class Menu:
         self.go()
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
+        health = int(config['Game']['health_lvl'])
+        strength = int(config['Game']['strength_lvl'])
+        speed = int(config['Game']['speed_lvl'])
+        regeneration = int(config['Game']['regeneration_lvl'])
+
         if config['Game']['started'] == 'False':
             pygame_menu.menu.Menu.get_current(self.menu).clear(True)
+            self.menu.add.selector('Strength lvl(40 points per lvl):',
+                                   [(f'{i}', i) for i in range(strength, 11)])
+            self.menu.add.selector('Speed lvl(20 points per lvl):',
+                                   [(f'{i}', i) for i in range(speed, 11)])
+            self.menu.add.selector('Health lvl(30 points per lvl):',
+                                   [(f'{i}', i) for i in range(health, 11)])
+            self.menu.add.selector('Regeneration lvl(45 points per lvl):',
+                                   [(f'{i}', i) for i in range(regeneration, 11)])
+
+            self.menu.add.button('Main  menu', self.back_to_menu)
 
     def back_to_menu(self):
+        values = []
+        for widget in self.menu.get_widgets():
+            try:
+                values.append(int(widget.get_value()[0][0]))
+            except ValueError:
+                pass
+        '''
+        if len(values) > 2:
+            config = configparser.ConfigParser()
+            config.read('Settings.cfg')
+            if sum(values) > int(config['Game']['money']):
+                self.menu.add.image('menu.jpg', angle=10, scale=(0.15, 0.15))
+        '''
         if self.menu.get_widgets()[0].get_value()[0][0] == 'ON':
             self.settings.WriteSettings('True')
-            print(1)
         else:
             self.settings.WriteSettings('False')
         pygame_menu.menu.Menu.get_current(self.menu).clear(True)
