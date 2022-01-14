@@ -197,6 +197,7 @@ class EnemyBeast(Entity):
                       }
         self.image = self.anime['stay'][1][0]
         self.mask = pygame.mask.from_surface(self.image)
+        self.cost = 5
 
     def movement(self, map_profile):
         if not self.anime['attack'][0]:
@@ -310,6 +311,199 @@ class EnemyBeast(Entity):
             else:
                 derivative_x = -30
             derivative_y = 20
+            self.anime['attack'][0] = True
+
+            if self.anime['attack'][2] != 4:
+                self.anime['attack'][2] += 1
+            else:
+                self.attack_counter += 1
+                self.anime['attack'][2] = 0
+                self.anime['attack'][1].rotate(1)
+                self.image = pygame.transform.flip(self.anime['attack'][1][0], self.Reversed, False)
+                self.rect = self.image.get_rect()
+
+            if self.attack_counter == 13:
+                self.attack_counter = 0
+                self.anime['attack'][0] = False
+
+            self.last_anime = 'attack'
+
+        elif self.anime['move'][0]:
+            if self.anime['move'][2] != 12:
+                self.anime['move'][2] += 1
+            else:
+                self.anime['move'][2] = 0
+                self.anime['move'][1].rotate(1)
+                self.image = pygame.transform.flip(self.anime['move'][1][0], self.Reversed, False)
+
+            self.anime['move'][0] = False
+            self.last_anime = 'move'
+
+        elif self.anime['stay'][0]:
+            if self.anime['stay'][2] != 7:
+                self.anime['stay'][2] += 1
+            else:
+                self.anime['stay'][2] = 0
+                self.anime['stay'][1].rotate(1)
+                self.image = pygame.transform.flip(self.anime['stay'][1][0], self.Reversed, False)
+
+            self.last_anime = 'stay'
+
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.rect.x = self.x - derivative_x
+        self.rect.y = self.y - derivative_y
+
+
+class EnemyTroll(Entity):
+    def __init__(self, start_point, player_pos, player):
+        super().__init__(start_point, player_pos, player)
+        self.last_anime = None
+        self.attack_counter = 0
+        self.stay_list = [rf'EnemyImg\Fantasy Troll\Stand\stand{i}.png' for i in range(7)]
+        self.walk_list = [rf'EnemyImg\Fantasy Troll\Walk\walk{i}.png' for i in range(8)]
+        self.death_list = [rf'EnemyImg\Fantasy Troll\Death\death{i}.png' for i in range(10)]
+        self.attack_list_1 = [rf'EnemyImg\Fantasy Troll\Attack\attack{i}.png' for i in range(21)]
+        self.death_counter = 0
+        self.anime = {'stay': [True, deque([pygame.transform.scale
+                                            (pygame.image.load
+                                             (element).convert_alpha(),
+                                             (self.cell_size * 1.4, self.cell_size * 1))
+                                            for element in self.stay_list]), 0, self.stay_list],
+                      'move': [False, deque([pygame.transform.scale
+                                             (pygame.image.load
+                                              (element).convert_alpha(),
+                                              (self.cell_size * 2, self.cell_size * 1))
+                                             for element in self.walk_list]), 0, self.walk_list],
+                      'death': [False, deque([pygame.transform.scale
+                                              (pygame.image.load
+                                               (element).convert_alpha(),
+                                               (self.cell_size * 1.4, self.cell_size * 1))
+                                              for element in self.death_list]), 0, self.death_list],
+                      'attack': [False, deque([pygame.transform.scale
+                                               (pygame.image.load
+                                                (element).convert_alpha(),
+                                                (self.cell_size * 2.57, self.cell_size * 1.8))
+                                               for element in self.attack_list_1]), 0,
+                                 self.attack_list_1]
+                      }
+        self.image = self.anime['stay'][1][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.damage = 5
+        self.cost = 20
+
+    def movement(self, map_profile):
+        if not self.anime['attack'][0]:
+            """Checking clicked buttons
+               :parameter map_profile: need board info [[len(50)]]"""
+            if -50 <= self.x < self.screen_resolution[0] and -20 <= self.y < self.screen_resolution[1]:
+                entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
+                              ((self.y - self.last_player_pos[1]) / self.cell_size)]
+
+                point_player = ((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
+                                (self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))
+                self.find_path(map_profile)
+
+                if self.path:
+                    self.path.pop(-1)
+                    self.path.append(point_player)
+                    if abs(entity_pos[0] - self.path[0][0]) <= 0.05 and abs(entity_pos[1] - self.path[0][1]) <= 0.05:
+                        del self.path[0]
+                    if self.path:
+                        move = False
+                        if entity_pos[0] - self.path[0][0] > 0.02:
+                            self.x_move(1)
+                            self.Reversed = True
+                            move = True
+                        if (self.path[0][0] - 0.2) - entity_pos[0] > 0.02:
+                            self.x_move(-1)
+                            self.Reversed = False
+                            move = True
+                        if entity_pos[1] - self.path[0][1] > 0.02:
+                            self.y_move(1)
+                            move = True
+                        if self.path[0][1] - entity_pos[1] > 0.02:
+                            self.y_move(-1)
+                            move = True
+                        if not move:
+                            self.anime['stay'][0] = True
+                else:
+                    directions = ['', '']
+                    if self.x - self.screen_resolution[0] / 2 < -10:
+                        x_derivative = 1
+                        directions[0] = 'right'
+                    elif self.x > self.screen_resolution[0] / 2:
+                        x_derivative = -1
+                        directions[0] = 'left'
+                    else:
+                        x_derivative = 0
+                    if self.y - self.screen_resolution[1] / 2 < -10:
+                        y_derivative = 1
+                        directions[1] = 'down'
+                    elif self.y > self.screen_resolution[1] / 2:
+                        y_derivative = -1
+                        directions[1] = 'up'
+                    else:
+                        y_derivative = 0
+
+                    if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
+                        print(directions)
+                        if self.collision(map_profile, directions[0]) and self.collision(map_profile,
+                                                                                         directions[1]):
+                            self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
+                            self.last_player_pos[1] += 0.021 * self.cell_size * y_derivative * -1
+                        elif self.collision(map_profile, directions[0]):
+                            self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
+                        elif self.collision(map_profile, directions[1]):
+                            self.last_player_pos[1] += 0.021 * self.cell_size * y_derivative * -1
+
+    def attack(self):
+        if pygame.sprite.collide_mask(self, self.player):
+            self.anime['attack'][0] = True
+            return True
+
+    def x_move(self, coefficient):
+        """:parameter coefficient: (1 or -1) means derivative coord x"""
+        self.anime['move'][0] = True
+        self.last_player_pos[0] += 0.021 * self.cell_size * coefficient
+
+    def y_move(self, coefficient):
+        """:parameter coefficient: (1 or -1) means derivative coord y"""
+        self.anime['move'][0] = True
+        self.last_player_pos[1] += 0.021 * self.cell_size * coefficient
+
+    def update(self, player_pos):
+        point = [(self.x - self.last_player_pos[0]) / self.cell_size,
+                 (self.y - self.last_player_pos[1]) / self.cell_size]
+        self.player_pos = player_pos
+        self.x = player_pos[0] + point[0] * self.cell_size
+        self.y = player_pos[1] + point[1] * self.cell_size
+        self.last_player_pos = list(player_pos)
+        derivative_x = 0
+        derivative_y = 0
+
+        if self.health <= 0:
+            self.anime['death'][0] = True
+            if self.anime['death'][2] != 20:
+                self.anime['death'][2] += 1
+            else:
+                self.death_counter += 1
+                self.anime['death'][2] = 0
+                self.anime['death'][1].rotate(1)
+                self.image = pygame.transform.flip(self.anime['death'][1][0], self.Reversed, False)
+                self.rect = self.image.get_rect()
+
+            if self.death_counter == 10:
+                self.death_counter = 0
+                self.kill()
+
+            self.last_anime = 'death'
+        elif self.anime['attack'][0]:
+            if self.Reversed:
+                derivative_x = 0
+            else:
+                derivative_x = 0
+            derivative_y = 90
             self.anime['attack'][0] = True
 
             if self.anime['attack'][2] != 4:

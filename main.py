@@ -18,9 +18,9 @@ def start_the_game():
     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
     player = Player.Player((23, 4), Map.get_monolith())
 
-    enemy = Enemy.EnemyBeast((3, 3), (player.x, player.y), player)
-    enemy_2 = Enemy.EnemyBeast((2, 2), (player.x, player.y), player)
-    enemy_3 = Enemy.EnemyBeast((1, 1), (player.x, player.y), player)
+    enemy = Enemy.EnemyTroll((3, 3), (player.x, player.y), player)
+    enemy_2 = Enemy.EnemyTroll((2, 2), (player.x, player.y), player)
+    enemy_3 = Enemy.EnemyTroll((1, 1), (player.x, player.y), player)
 
     fps_counter = Fps.FpsCounter(surface, clock)
     hp_mana_bar = Draw.InfoPlayer(player)
