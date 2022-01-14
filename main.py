@@ -10,9 +10,7 @@ import configparser
 
 
 def start_the_game():
-    game_settings = settings
-    surface = game_settings.InitScreen()
-
+    surface = settings.InitScreen()
     clock = pygame.time.Clock()
 
     """Classes"""
@@ -39,12 +37,13 @@ def start_the_game():
     coefficient_scaling = 3
     all_sprites = pygame.sprite.Group()
     all_sprites.add(fps_counter)
-
+    sys_exit = False
     while running:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = 0
+                sys_exit = True
             if event.type == pygame.MOUSEWHEEL:
                 '''
                 if coefficient_scaling != max(event.y * 0.05 + coefficient_scaling, 1) and \
@@ -100,7 +99,9 @@ def start_the_game():
         hp_mana_bar.draw(surface)
         fps_counter.render()
         pygame.display.flip()
-    settings.WriteEnd(player)
+
+    if not sys_exit:
+        settings.WriteEnd(player)
 
 
 if __name__ == '__main__':
@@ -114,4 +115,3 @@ if __name__ == '__main__':
     menu.menu.mainloop(screen)
     config = configparser.ConfigParser()
     config.read('Settings.cfg')
-    self.cell_size = int(config['Cell_size']['cell_size'])
