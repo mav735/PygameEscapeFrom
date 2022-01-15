@@ -11,8 +11,9 @@ class DrawFloor:
 
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
+        self.font = pygame.font.Font(rf'PlayerImg\hp.ttf', 32)
         self.cell_size = int(config['Cell_size']['cell_size'])
-
+        self.screen_size = list(map(int, config['Resolution']['resolution'].split(', ')))
         self.type_texture = type_texture
         self.materials = {
             '1': pygame.transform.scale(
@@ -51,6 +52,11 @@ class DrawFloor:
                                      (coords[0] + row * self.cell_size,
                                       coords[1] + column * self.cell_size))
 
+    def blit_coins(self, coins):
+        self.coins_text = self.font.render(str(coins), False, "YELLOW")
+        self.coins_text_rect = self.coins_text.get_rect(center=(self.screen_size[0] - 100, 30))
+        self.screen.blit(self.coins_text, self.coins_text_rect)
+        self.screen.blit(self.im,(self.screen_size[0] - 100 - int(self.cell_size * 0.7), 0))
 
 class InfoPlayer:
     def __init__(self, player):

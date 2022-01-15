@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.death_counter = 0
         self.attack_counter = 0
         self.health = 100
+        self.coins = 0
         self.mana = 2000
         self.armor = 0
         self.inventory = []

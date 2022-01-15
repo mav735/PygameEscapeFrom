@@ -19,7 +19,7 @@ def start_the_game():
     player = Player.Player((23, 4), Map.get_monolith())
 
     enemy = Enemy.EnemyTroll((3, 3), (player.x, player.y), player)
-    enemy_2 = Enemy.EnemyTroll((2, 2), (player.x, player.y), player)
+    enemy_2 = Enemy.EnemyBeast((2, 2), (player.x, player.y), player)
     enemy_3 = Enemy.EnemyTroll((1, 1), (player.x, player.y), player)
 
     fps_counter = Fps.FpsCounter(surface, clock)
@@ -82,6 +82,10 @@ def start_the_game():
             if sprite.attack():
                 player.health -= sprite.damage
 
+            if sprite.health <= 0 and sprite.coins_earned:
+                player.coins += sprite.cost
+                sprite.coins_earned = False
+
         surface.fill((47, 47, 47))
         coords = player.get_coords()
         player.update()
@@ -93,6 +97,7 @@ def start_the_game():
 
         all_sprites.update()
         floor_drawer.blit_floor(coords)
+        floor_drawer.blit_coins(player.coins)
 
         player_sprite.draw(surface)
         enemy_sprite.draw(surface)
