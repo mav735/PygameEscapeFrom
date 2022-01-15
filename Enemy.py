@@ -360,10 +360,10 @@ class EnemyTroll(Entity):
         super().__init__(start_point, player_pos, player)
         self.last_anime = None
         self.attack_counter = 0
-        self.stay_list = [rf'EnemyImg\Fantasy Troll\Stand\stand{i}.png' for i in range(7)]
-        self.walk_list = [rf'EnemyImg\Fantasy Troll\Walk\walk{i}.png' for i in range(8)]
-        self.death_list = [rf'EnemyImg\Fantasy Troll\Death\death{i}.png' for i in range(10)]
-        self.attack_list_1 = [rf'EnemyImg\Fantasy Troll\Attack\attack{i}.png' for i in range(21)]
+        self.stay_list = [rf'EnemyImg\Fantasy Troll\Stand\stand{i}.png' for i in range(7)][::-1]
+        self.walk_list = [rf'EnemyImg\Fantasy Troll\Walk\walk{i}.png' for i in range(8)][::-1]
+        self.death_list = [rf'EnemyImg\Fantasy Troll\Death\death{i}.png' for i in range(10)][::-1]
+        self.attack_list_1 = [rf'EnemyImg\Fantasy Troll\Attack\attack{i}.png' for i in range(21)][::-1]
         self.death_counter = 0
         self.anime = {'stay': [True, deque([pygame.transform.scale
                                             (pygame.image.load
@@ -389,7 +389,7 @@ class EnemyTroll(Entity):
                       }
         self.image = self.anime['stay'][1][0]
         self.mask = pygame.mask.from_surface(self.image)
-        self.damage = 5
+        self.damage = 3
         self.cost = 20
 
     def movement(self, map_profile):
@@ -484,7 +484,11 @@ class EnemyTroll(Entity):
 
         if self.health <= 0:
             self.anime['death'][0] = True
-            if self.anime['death'][2] != 20:
+            if self.Reversed:
+                derivative_x = 60
+            else:
+                derivative_x = -60
+            if self.anime['death'][2] != 6:
                 self.anime['death'][2] += 1
             else:
                 self.death_counter += 1
@@ -503,7 +507,7 @@ class EnemyTroll(Entity):
                 derivative_x = 0
             else:
                 derivative_x = 0
-            derivative_y = 90
+            derivative_y = 60
             self.anime['attack'][0] = True
 
             if self.anime['attack'][2] != 4:

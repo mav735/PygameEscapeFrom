@@ -105,7 +105,8 @@ class MapGenerator:
                 while True:
                     self.monolith = [randint(0, 49), randint(0, 49)]
                     if self.map_profile[self.monolith[0]][self.monolith[1]] == '1' \
-                            and self.monolith != self.start_point:
+                            and self.monolith != self.start_point and \
+                            self.start_point not in self.neighbours(self.monolith):
                         break
                 print('monolith =', self.monolith)
                 self.map_profile[self.monolith[0]][self.monolith[1]] = '8'
@@ -118,6 +119,16 @@ class MapGenerator:
     def get_map(self):
         """:returns Map info"""
         return self.map_profile
+
+    @staticmethod
+    def neighbours(point):
+        """Returns coordinates of neighbours of current point"""
+        result = []
+        for k in range(9):
+            dot = [point[0] - 1 + k % 3, point[1] - 1 + k // 3]
+            result.append(dot)
+        result = [p for p in result if -1 < p[0] < 50 and -1 < p[1] < 50]
+        return result
 
     def get_monolith(self):
         """:returns Monolith position"""
