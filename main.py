@@ -1,3 +1,4 @@
+import random
 import pygame
 import Menu
 import Draw
@@ -16,11 +17,19 @@ def start_the_game():
     """Classes"""
     Map = Generator.MapGenerator()
     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
-    player = Player.Player((23, 4), Map.get_monolith())
-
-    enemy = Enemy.EnemyTroll((3, 3), (player.x, player.y), player)
-    enemy_2 = Enemy.EnemyBeast((2, 2), (player.x, player.y), player)
-    enemy_3 = Enemy.EnemyTroll((1, 1), (player.x, player.y), player)
+    player = Player.Player(Map.start_point, Map.get_monolith())
+    print(Map.start_point, Map.monolith)
+    used_points = [Map.start_point, Map.monolith]
+    enemy = []
+    for i in range(20):
+        while True:
+            point = [random.randint(0, 49), random.randint(0, 49)]
+            if point not in used_points and Map.get_map()[point[0]][point[1]] == '1':
+                used_points.append(point)
+                enemy.append(random.choices([
+                    Enemy.EnemyTroll(point, (player.x, player.y), player),
+                    Enemy.EnemyBeast(point, (player.x, player.y), player)]))
+                break
 
     fps_counter = Fps.FpsCounter(surface, clock)
     hp_mana_bar = Draw.InfoPlayer(player)
@@ -31,9 +40,8 @@ def start_the_game():
     player_sprite = pygame.sprite.Group()
     player_sprite.add(player)
     enemy_sprite = pygame.sprite.Group()
-    enemy_sprite.add(enemy)
-    enemy_sprite.add(enemy_2)
-    enemy_sprite.add(enemy_3)
+    for entity in enemy:
+        enemy_sprite.add(entity)
     coefficient_scaling = 3
     all_sprites = pygame.sprite.Group()
     all_sprites.add(fps_counter)

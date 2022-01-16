@@ -17,7 +17,6 @@ class MapGenerator:
 
                 # Generation rooms
                 rooms = map_generator(w, h)
-                print(*rooms, sep='\n')
                 for line in rooms:
                     for room in line:
                         room = square_room(room)
@@ -98,7 +97,7 @@ class MapGenerator:
 
                 # random start point
                 while True:
-                    self.start_point = randint(0, 49), randint(0, 49)
+                    self.start_point = [randint(0, 49), randint(0, 49)]
                     if self.map_profile[self.start_point[0]][self.start_point[1]] == '1':
                         break
 
@@ -108,7 +107,6 @@ class MapGenerator:
                             and self.monolith != self.start_point and \
                             self.start_point not in self.neighbours(self.monolith):
                         break
-                print('monolith =', self.monolith)
                 self.map_profile[self.monolith[0]][self.monolith[1]] = '8'
                 flag = True
                 if flag:

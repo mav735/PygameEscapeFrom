@@ -13,7 +13,7 @@ class Entity(pygame.sprite.Sprite):
         """:parameter start_point: (x,y) spawn point of enemy
            :parameter player_pos: actual position of player(camera)"""
         pygame.sprite.Sprite.__init__(self)
-        self.player_pos = (None, None)
+        self.player_pos = player_pos
         self.player = player
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
@@ -255,7 +255,6 @@ class EnemyBeast(Entity):
                         y_derivative = 0
 
                     if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
-                        print(directions)
                         if self.collision(map_profile, directions[0]) and self.collision(map_profile,
                                                                                          directions[1]):
                             self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
@@ -401,7 +400,6 @@ class EnemyTroll(Entity):
             if -50 <= self.x < self.screen_resolution[0] and -20 <= self.y < self.screen_resolution[1]:
                 entity_pos = [((self.x - self.last_player_pos[0]) / self.cell_size),
                               ((self.y - self.last_player_pos[1]) / self.cell_size)]
-
                 point_player = ((self.player_pos[0] - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
                                 (self.player_pos[1] - (self.screen_resolution[1] / 2)) / (-1 * self.cell_size))
                 self.find_path(map_profile)
@@ -449,7 +447,6 @@ class EnemyTroll(Entity):
                         y_derivative = 0
 
                     if 0 <= self.x < self.screen_resolution[0] and 0 <= self.y < self.screen_resolution[1]:
-                        print(directions)
                         if self.collision(map_profile, directions[0]) and self.collision(map_profile,
                                                                                          directions[1]):
                             self.last_player_pos[0] += 0.021 * self.cell_size * x_derivative * -1
