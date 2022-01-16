@@ -16,9 +16,17 @@ def start_the_game():
 
     """Classes"""
     Map = Generator.MapGenerator()
+
     floor_drawer = Draw.DrawFloor(surface, '1', Map.get_map())
     player = Player.Player(Map.start_point, Map.get_monolith())
-    print(Map.start_point, Map.monolith)
+
+    cfg = configparser.ConfigParser()
+    cfg.read('Settings.cfg')
+    cfg['Game']['level'] = str(int(cfg['Game']['level']) + 1)
+    with open('Settings.cfg', 'w') as configfile:
+        cfg.write(configfile)
+    print(f"LEVEl {cfg['Game']['level']}\nPlayer = {Map.start_point}", f'Monolith = {Map.monolith}',
+          f'money = {player.all_money}', f'hp = {player.health}', '', sep='\n')
     used_points = [Map.start_point, Map.monolith]
     enemy = []
     for i in range(20):
@@ -49,9 +57,6 @@ def start_the_game():
     while running:
         clock.tick(FPS)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = 0
-                sys_exit = True
             if event.type == pygame.MOUSEWHEEL:
                 '''
                 if coefficient_scaling != max(event.y * 0.05 + coefficient_scaling, 1) and \
@@ -76,8 +81,11 @@ def start_the_game():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 player.attack()
 
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-                player.health += 1000
+            if pygame.key.get_pressed()[pygame.K_h]:
+                player.health += 100
+
+            if pygame.key.get_pressed()[pygame.K_m]:
+                player.all_money += 25
 
         player.movement(Map.get_map())
 
@@ -91,7 +99,7 @@ def start_the_game():
                 player.health -= sprite.damage
 
             if sprite.health <= 0 and sprite.coins_earned:
-                player.coins += sprite.cost
+                player.all_money += sprite.cost
                 sprite.coins_earned = False
 
         surface.fill((47, 47, 47))
@@ -105,7 +113,7 @@ def start_the_game():
 
         all_sprites.update()
         floor_drawer.blit_floor(coords)
-        floor_drawer.blit_coins(player.coins)
+        floor_drawer.blit_coins(player.all_money)
 
         player_sprite.draw(surface)
         enemy_sprite.draw(surface)
@@ -113,7 +121,7 @@ def start_the_game():
         fps_counter.render()
         pygame.display.flip()
 
-    if not sys_exit:
+    if not sys_exit and running == 0:
         settings.WriteEnd(player)
 
 

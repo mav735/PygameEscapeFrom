@@ -9,7 +9,6 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, start_point, end_point):
         """:parameter start_point: (x,y) spawn point of player"""
         pygame.sprite.Sprite.__init__(self)
-        self.all_money = 300
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
         self.screen_resolution = list(
@@ -20,12 +19,12 @@ class Player(pygame.sprite.Sprite):
                 self.cell_size * start_point[0] + 0.5 * self.cell_size)
         self.y = (self.screen_resolution[1] / 2) - (
                 self.cell_size * start_point[1] + 0.5 * self.cell_size)
-
-        self.damage = 10
+        self.max_hp = 100 + int(config['Game']['health_lvl']) * 50
+        self.damage = 10 + int(config['Game']['strength_lvl']) * 5
         self.death_counter = 0
         self.attack_counter = 0
-        self.health = 100
-        self.coins = 0
+        self.health = 100 + int(config['Game']['health_lvl']) * 50
+        self.all_money = int(config['Game']['money'])
         self.mana = 2000
         self.armor = 0
         self.inventory = []
@@ -68,10 +67,16 @@ class Player(pygame.sprite.Sprite):
         return self.x, self.y
 
     def x_move(self, coefficient):
-        self.x += 0.041 * self.cell_size * coefficient
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        speed = 0.041 + 0.041 / 8 * int(config['Game']['speed_lvl'])
+        self.x += speed * self.cell_size * coefficient
 
     def y_move(self, coefficient):
-        self.y += 0.041 * self.cell_size * coefficient
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        speed = 0.041 + 0.041 / 8 * int(config['Game']['speed_lvl'])
+        self.y += speed * self.cell_size * coefficient
 
     def self_kill(self):
         self.health -= 100
@@ -162,6 +167,9 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         """Draw animation of deque for player"""
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        self.health = min(int(config['Game']['regeneration_lvl']) / 120 + self.health, self.max_hp)
         if self.health <= 0:
             self.anime['death'][0] = True
             if self.anime['death'][2] != 4:

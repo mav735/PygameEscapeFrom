@@ -23,7 +23,7 @@ class Settings:
         config['Cell_size'] = {'cell_size': str(self.cell_size)}
         config['FPS'] = {'show_fps_counter': f'{fps_value}'}
         config['Game'] = {'started': f'True', 'health_lvl': '0', 'strength_lvl': '0',
-                          'speed_lvl': '0', 'regeneration_lvl': '0', 'money': '0'}
+                          'speed_lvl': '0', 'regeneration_lvl': '0', 'money': '0', 'level': '0'}
 
         with open('Settings.cfg', 'w') as configfile:
             config.write(configfile)
@@ -42,6 +42,3 @@ class Settings:
         config.read('Settings.cfg')
         config['FPS'] = {'show_fps_counter': f'{self.fps_value}'}
         return self.screen
-
-    def InitColors(self):
-        self.Gray
