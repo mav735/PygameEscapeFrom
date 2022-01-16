@@ -4,7 +4,7 @@ import configparser
 
 
 class Menu:
-    def __init__(self, settings, func):
+    def __init__(self, settings, func, screen):
         self.start_theme = pygame_menu.themes.Theme(background_color=(0, 0, 0, 0),
                                                     # transparent background
                                                     title_background_color=(47, 47, 47),
@@ -33,6 +33,7 @@ class Menu:
         self.menu.add.button('Play', self.start)
         self.menu.add.button('Settings', self.settings_mode)
         self.menu.add.button('Quit', pygame_menu.events.EXIT)
+        self.screen = screen
         self.coin = None
         self.heath_label = None
         self.regeneration_label = None
@@ -49,8 +50,45 @@ class Menu:
         self.go()
         config = configparser.ConfigParser()
         config.read('Settings.cfg')
+        if config['Game']['end'] == 'True':
+            self.end_menu()
+            self.menu.add.label('Your path ends here...')
+            self.menu.add.vertical_margin(700)
+
+            self.menu.add.label('Completed levels ' + str(int(config['Game']['level']) - 1))
+            self.menu.add.label('Coins at the time of death ' + config['Game']['money'])
+            self.menu.add.label('All collected coins ' + config['Game']['all_money'])
+            self.menu.add.label('Creatures killed ' + config['Game']['killed_creatures'])
+            self.menu.add.vertical_margin(50)
+
+            self.menu.add.label('Strength lvl ' + config['Game']['strength_lvl'])
+            self.menu.add.label('Speed lvl ' + config['Game']['speed_lvl'])
+            self.menu.add.label('Health lvl ' + config['Game']['health_lvl'])
+            self.menu.add.label('Regeneration lvl ' + config['Game']['regeneration_lvl'])
+
+            self.menu.mainloop(self.screen)
+
         if config['Game']['started'] == 'False':
             self.buy_menu()
+
+    def end_menu(self):
+        config = configparser.ConfigParser()
+        config.read('Settings.cfg')
+        pygame_menu.menu.Menu.get_current(self.menu).clear(True)
+        pygame_menu.menu.Menu.get_current(self.menu).enable()
+
+        config['Game']['started'] = 'True'
+        self.image = pygame.transform.scale(pygame.image.load('menu.jpg').convert_alpha(),
+                                            (self.settings.resolution[0],
+                                             self.settings.resolution[1]))
+        pygame.image.save(self.image, 'menu.jpg')
+        self.menu_image = pygame_menu.baseimage.BaseImage(
+            image_path='menu.jpg',
+            drawing_mode=pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY, )
+        self.start_theme.background_color = self.menu_image
+        self.menu = pygame_menu.Menu('Escape from Piter', self.settings.resolution[0],
+                                     self.settings.resolution[1],
+                                     theme=self.start_theme)
 
     def buy_menu(self):
         config = configparser.ConfigParser()

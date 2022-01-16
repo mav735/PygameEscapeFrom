@@ -393,6 +393,7 @@ class EnemyTroll(Entity):
         self.mask = pygame.mask.from_surface(self.image)
         self.damage = 0.9
         self.coins_earned = True
+        self.cost = 20
         self.health = 800
 
     def movement(self, map_profile):

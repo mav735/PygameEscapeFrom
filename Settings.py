@@ -22,8 +22,9 @@ class Settings:
         config['Resolution'] = {'resolution': f'{self.resolution[0]}, {self.resolution[1]}'}
         config['Cell_size'] = {'cell_size': str(self.cell_size)}
         config['FPS'] = {'show_fps_counter': f'{fps_value}'}
-        config['Game'] = {'started': f'True', 'health_lvl': '0', 'strength_lvl': '0',
-                          'speed_lvl': '0', 'regeneration_lvl': '0', 'money': '0', 'level': '0'}
+        config['Game'] = {'started': f'True', 'end': f'False', 'health_lvl': '0', 'strength_lvl':
+                          '0', 'speed_lvl': '0', 'regeneration_lvl': '0', 'money': '0',
+                          'level': '0', 'all_money': '0', 'killed_creatures': '0'}
 
         with open('Settings.cfg', 'w') as configfile:
             config.write(configfile)

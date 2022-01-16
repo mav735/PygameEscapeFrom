@@ -165,6 +165,16 @@ class Player(pygame.sprite.Sprite):
 
         self.cell_size = new_cell_size
 
+    def death(self):
+        if self.health <= 0:
+            config = configparser.ConfigParser()
+            config.read('Settings.cfg')
+            config['Game']['end'] = 'True'
+            with open('Settings.cfg', 'w') as configfile:
+                config.write(configfile)
+
+        return self.health <= 0
+
     def update(self):
         """Draw animation of deque for player"""
         config = configparser.ConfigParser()
@@ -186,7 +196,7 @@ class Player(pygame.sprite.Sprite):
 
             if self.death_counter == 16:
                 self.death_counter = 0
-                pygame.quit()
+                self.death()
 
             self.last_anime = 'death'
         elif self.anime['attack'][0]:

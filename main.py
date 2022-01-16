@@ -51,6 +51,8 @@ def start_the_game():
     for entity in enemy:
         enemy_sprite.add(entity)
     coefficient_scaling = 3
+    cfg = configparser.ConfigParser()
+    cfg.read('Settings.cfg')
     all_sprites = pygame.sprite.Group()
     all_sprites.add(fps_counter)
     sys_exit = False
@@ -100,14 +102,20 @@ def start_the_game():
 
             if sprite.health <= 0 and sprite.coins_earned:
                 player.all_money += sprite.cost
+
+                cfg['Game']['all_money'] = str(int(cfg['Game']['all_money']) + sprite.cost)
+                cfg['Game']['killed_creatures'] = str(int(cfg['Game']['killed_creatures']) + 1)
+
+                with open('Settings.cfg', 'w') as configfile:
+                    cfg.write(configfile)
+
                 sprite.coins_earned = False
 
         surface.fill((47, 47, 47))
         coords = player.get_coords()
         player.update()
 
-        end = player.end()
-        if end:
+        if player.end() or player.death():
             running = 0
         enemy_sprite.update((player.x, player.y))
 
@@ -132,7 +140,7 @@ if __name__ == '__main__':
     settings = Settings.Settings(infoObject)
     settings.WriteSettings()
     screen = settings.InitScreen()
-    menu = Menu.Menu(settings, start_the_game)
+    menu = Menu.Menu(settings, start_the_game, screen)
     menu.menu.mainloop(screen)
     config = configparser.ConfigParser()
     config.read('Settings.cfg')
