@@ -198,6 +198,7 @@ class EnemyBeast(Entity):
         self.image = self.anime['stay'][1][0]
         self.mask = pygame.mask.from_surface(self.image)
         self.coins_earned = True
+        self.damage = 0.3
         self.cost = 5
 
     def movement(self, map_profile):
@@ -389,7 +390,7 @@ class EnemyTroll(Entity):
                       }
         self.image = self.anime['stay'][1][0]
         self.mask = pygame.mask.from_surface(self.image)
-        self.damage = 3
+        self.damage = 0.9
         self.coins_earned = True
         self.cost = 20
 
