@@ -42,6 +42,10 @@ class DrawFloor:
                 (self.cell_size, self.cell_size))
         }
         self.map = Map
+        self.im = pygame.transform.scale(pygame.image.load(r'PlayerImg/coin.png').convert_alpha(),
+                                         (int(self.cell_size) * 0.2, int(self.cell_size) * 0.2))
+        self.coins_text = self.font.render(str(0), False, "YELLOW")
+        self.coins_text_rect = self.coins_text.get_rect(center=(self.screen_size[0] - 100, 30))
 
     def blit_floor(self, coords):
         """:parameter coords: left and top border(x, y)"""
@@ -54,9 +58,10 @@ class DrawFloor:
 
     def blit_coins(self, coins):
         self.coins_text = self.font.render(str(coins), False, "YELLOW")
-        self.coins_text_rect = self.coins_text.get_rect(center=(self.screen_size[0] - 100, 30))
+        self.coins_text_rect = self.coins_text.get_rect(center=(self.screen_size[0] - 50, 30))
         self.screen.blit(self.coins_text, self.coins_text_rect)
-        self.screen.blit(self.im,(self.screen_size[0] - 100 - int(self.cell_size * 0.7), 0))
+        self.screen.blit(self.im, (self.screen_size[0] - int(self.cell_size * 0.7), 15))
+
 
 class InfoPlayer:
     def __init__(self, player):
