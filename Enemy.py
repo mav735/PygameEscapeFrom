@@ -3,9 +3,6 @@ import configparser
 from collections import deque
 
 
-# from numba import njit
-
-
 class Entity(pygame.sprite.Sprite):
     """Main class of enemy"""
 
@@ -130,24 +127,6 @@ class Entity(pygame.sprite.Sprite):
         if abs(self.x - self.screen_resolution[0] / 2) < 90 and abs(
                 self.y - self.screen_resolution[1] / 2) < 90:
             return True
-
-    def resize_scale(self, new_cell_size, player_pos):
-        """:parameter player_pos: new position of player
-           :parameter new_cell_size: Need rescaled size of cell"""
-
-        for element in self.anime:
-            for index in range(len(self.anime[element][1])):
-                pygame.transform.scale(
-                    pygame.image.load(self.anime[element][3][index]),
-                    (new_cell_size, new_cell_size))
-
-        point = [(self.x - self.last_player_pos[0]) / self.cell_size,
-                 (self.y - self.last_player_pos[1]) / self.cell_size]
-
-        self.x = player_pos[0] + point[0] * new_cell_size
-        self.y = player_pos[1] + point[1] * new_cell_size
-
-        self.cell_size = new_cell_size
 
     def update(self, player_pos):
         if self.health <= 0:
@@ -483,6 +462,7 @@ class EnemyTroll(Entity):
         self.last_player_pos = list(player_pos)
         derivative_x = 0
         derivative_y = 0
+        self.attack()
 
         if self.health <= 0:
             self.anime['death'][0] = True
@@ -549,6 +529,4 @@ class EnemyTroll(Entity):
             self.last_anime = 'stay'
 
         self.mask = pygame.mask.from_surface(self.image)
-
-        self.rect.x = self.x - derivative_x
-        self.rect.y = self.y - derivative_y
+        self.rect.center = (self.x - derivative_x, self.y - derivative_y + self.cell_size * 0.2)

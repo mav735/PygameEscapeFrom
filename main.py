@@ -50,7 +50,6 @@ def start_the_game():
     enemy_sprite = pygame.sprite.Group()
     for entity in enemy:
         enemy_sprite.add(entity)
-    coefficient_scaling = 3
     cfg = configparser.ConfigParser()
     cfg.read('Settings.cfg')
     all_sprites = pygame.sprite.Group()
