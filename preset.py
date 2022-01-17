@@ -11,9 +11,9 @@ def square_room(side):
         room[i][-1] = '7'
 
     room[0][0] = '4'
-    room[-1][0] = '0'  # change edge
+    room[-1][0] = '9'  # change edge
     room[0][-1] = '6'  # change edge
-    room[-1][-1] = '0'  # change edge
+    room[-1][-1] = '10'  # change edge
 
     return room
 

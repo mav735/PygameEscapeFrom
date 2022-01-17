@@ -39,6 +39,12 @@ class DrawFloor:
                 (self.cell_size, self.cell_size)),
             '8': pygame.transform.scale(
                 pygame.image.load(os.path.join('Walls', 'monolith.png')).convert(),
+                (self.cell_size, self.cell_size)),
+            '9': pygame.transform.scale(
+                pygame.image.load(os.path.join('Walls', 'wall9.png')).convert(),
+                (self.cell_size, self.cell_size)),
+            '10': pygame.transform.scale(
+                pygame.image.load(os.path.join('Walls', 'wall10.png')).convert(),
                 (self.cell_size, self.cell_size))
         }
         self.map = Map
