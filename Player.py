@@ -61,6 +61,7 @@ class Player(pygame.sprite.Sprite):
         self.Reversed = False  # swap animation reverse
         self.mask = pygame.mask.from_surface(self.image)
         self.monolith = end_point
+        self.max_mana = 2000
 
     def get_coords(self):
         """:returns coords of players(cam)"""
@@ -118,9 +119,10 @@ class Player(pygame.sprite.Sprite):
         return self.monolith in result
 
     def attack(self):
-        self.anime['move'][0] = False
-        self.anime['stay'][0] = False
-        self.anime['attack'][0] = True
+        if self.mana > 150:
+            self.anime['move'][0] = False
+            self.anime['stay'][0] = False
+            self.anime['attack'][0] = True
 
     def collision(self, map_profile, direction):
         point = [(self.x - (self.screen_resolution[0] / 2)) / (-1 * self.cell_size),
@@ -200,6 +202,7 @@ class Player(pygame.sprite.Sprite):
 
             self.last_anime = 'death'
         elif self.anime['attack'][0]:
+            self.mana -= 4
             if self.anime['attack'][2] != 4:
                 self.anime['attack'][2] += 1
             else:
@@ -244,3 +247,4 @@ class Player(pygame.sprite.Sprite):
             self.last_anime = 'stay'
 
         self.mask = pygame.mask.from_surface(self.image)
+        self.mana = min(self.max_mana, self.mana + 0.1)

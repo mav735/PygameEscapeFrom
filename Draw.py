@@ -96,13 +96,15 @@ class InfoPlayer:
             image.blit(self.font.render(f'{round(self.player.health + 0.5)}/' + f'{self.max_hp}',
                                         True, (255, 255, 255)), (x1 + 220, y1 + 10))
 
-            mana_length = round(264 * (self.player.mana / 2000) + 0.5)
-            mana_line = pygame.surface.Surface((mana_length, 24))
-            mana_line.fill((30, 30, 255))
-            image.blit(mana_line, (x1 + 132, y1 + 52))
-            image.blit(self.font.render(f'{round(self.player.mana + 0.5)}/' +
-                                        f'{self.player.mana}',
-                                        True, (255, 255, 255)), (x1 + 220, y1 + 50))
+            if self.player.mana > 0:
+                mana_length = round(264 * (self.player.mana / self.player.max_mana) + 0.5)
+                mana_line = pygame.surface.Surface((mana_length, 24))
+                mana_line.fill((30, 30, 255))
+                image.blit(mana_line, (x1 + 132, y1 + 52))
+                image.blit(self.font.render(f'{round(self.player.mana + 0.5)}/' +
+                                            f'{self.player.max_mana}',
+                                            True, (255, 255, 255)), (x1 + 220, y1 + 50))
+
             image.blit(self.FRAME, (0, 0))
             screen.blit(image, (0, 0))
         except pygame.error:
